@@ -6,6 +6,14 @@ Open the file in a modern browser, select or drop Parquet files, and inspect the
 
 ![HTML Parquet Viewer demo](assets/demo.gif)
 
+
+## Try it online
+
+Open the hosted viewer:  
+https://ttomohisa.github.io/html-parquet-viewer
+
+Your files stay in your browser. Nothing is uploaded.
+
 ## Why
 
 Parquet files often need a quick inspection on locked-down workstations, air-gapped networks, or during data-pipeline debugging. This viewer is designed for that job:
