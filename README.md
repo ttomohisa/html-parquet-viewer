@@ -90,7 +90,9 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ## License and notices
 
-This repository is intended to be released under the **MIT License**. Add a `LICENSE` file containing the standard MIT text and set GitHub's repository license to MIT.
+Copyright (c) 2026 Tomohisa Takagi
+
+This project is licensed under the [MIT License](LICENSE).
 
 The embedded Parquet parser is derived from **hyparquet**, which is licensed under MIT. Keep its copyright/license notice in the distribution or provide it in a `THIRD_PARTY_NOTICES.md` file when publishing modified or bundled copies.
 
