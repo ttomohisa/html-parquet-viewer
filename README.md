@@ -10,7 +10,7 @@ Open the file in a modern browser, select or drop Parquet files, and inspect the
 ## Try it online
 
 Open the hosted viewer:  
-https://ttomohisa.github.io/html-parquet-viewer
+https://ttomohisa.github.io/html-parquet-viewer/parquet-viewer.html
 
 Your files stay in your browser. Nothing is uploaded.
 
