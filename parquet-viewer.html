@@ -1539,6 +1539,76 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function csv() { let q = v => v == null ? "" : String(v).replaceAll('"', '""'), cols = N.lastColumns, lines = [cols.map(q => `"${q}"`).join(",")]; for (let r of N.lastRows) lines.push(cols.map(c => `"${q(r[c])}"`).join(",")); return lines.join("\r\n") }
 		D("file").addEventListener("change", e => { Rr(e.target.files); e.target.value = "" }); D("drop").addEventListener("dragover", e => { e.preventDefault(); D("drop").classList.add("drag") }); D("drop").addEventListener("dragleave", () => D("drop").classList.remove("drag")); D("drop").addEventListener("drop", e => { e.preventDefault(); D("drop").classList.remove("drag"); Rr(e.dataTransfer.files) }); D("tabs").onclick = async e => { let close = e.target.closest("[data-close]"); if (close) { let id = close.dataset.close, was = id === activeTab; tabs.delete(id); if (was) { activeTab = tabs.keys().next().value || null; if (activeTab) await activate(activeTab); else ho() } renderTabs(); return } let tab = e.target.closest("[data-tab]"); if (tab && tab.dataset.tab !== activeTab) { saveActive(); await activate(tab.dataset.tab) } }; D("prev").onclick = async () => { N.page--; await yt() }; D("next").onclick = async () => { N.page++; await yt() }; D("page-size").onchange = async e => { N.pageSize = Number(e.target.value); N.page = 0; await yt() }; D("row-jump").onchange = async e => { let r = Math.max(1, Math.min(Math.ceil(N.rows / N.pageSize), Number(e.target.value) || 1)); N.page = r - 1; await yt() }; D("row-jump").onkeydown = e => { if (e.key === "Enter") e.target.onchange(e) }; D("copy-csv").onclick = async () => { try { await navigator.clipboard.writeText(csv()); let b = D("copy-csv"), old = b.textContent; b.textContent = "Copied"; b.classList.add("copied"); setTimeout(() => { b.textContent = old; b.classList.remove("copied") }, 1500) } catch (e) { je("Could not copy CSV. Your browser may block clipboard access.", "error") } }; document.querySelectorAll(".section-heading").forEach(b => b.onclick = () => { let content = D(b.getAttribute("aria-controls")), shown = !content.hidden; content.hidden = shown; b.setAttribute("aria-expanded", String(!shown)) }); je(`Ready — supports ${Qr}.`, "ok");
 	</script>
+
+<!--
+THIRD-PARTY NOTICES
+===================
+
+This HTML Parquet Viewer includes third-party software.
+The notices below apply to the copies bundled in this file.
+
+----------------------------------------------------------------
+hyparquet
+----------------------------------------------------------------
+
+Project: https://github.com/hyparam/hyparquet
+License: MIT
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------------------------------------------------------------
+hyparquet-compressors
+----------------------------------------------------------------
+
+Project: https://github.com/hyparam/hyparquet-compressors
+License: MIT
+
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------------------------------------------------------------
+Project license
+----------------------------------------------------------------
+
+Copyright (c) 2026 Tomohisa Takagi
+
+HTML Parquet Viewer is licensed under the MIT License.
+-->
 </body>
 
 </html>

@@ -88,13 +88,17 @@ The distributable is deliberately a single generated HTML file. If you modify it
 - Test with both small and large files, multiple row groups, and compressed input.
 - Test the file picker and multi-file drag-and-drop flows.
 
-## License and notices
+## License and third-party notices
 
 Copyright (c) 2026 Tomohisa Takagi
 
 This project is licensed under the [MIT License](LICENSE).
 
-The embedded Parquet parser is derived from **hyparquet**, which is licensed under MIT. Keep its copyright/license notice in the distribution or provide it in a `THIRD_PARTY_NOTICES.md` file when publishing modified or bundled copies.
+This distribution bundles or derives from third-party software, including
+[hyparquet](https://github.com/hyparam/hyparquet) and
+[hyparquet-compressors](https://github.com/hyparam/hyparquet-compressors).
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the applicable
+copyright notices, license texts, and included versions.
 
 “Apache”, “Apache Parquet”, and associated logos are trademarks of the Apache Software Foundation. This project is an independent viewer and is not affiliated with or endorsed by the Apache Software Foundation. Avoid presenting the bundled icon as an official project logo.
 
