@@ -9,7 +9,6 @@ licenses. Their copyright notices and license texts are reproduced below.
 ## hyparquet
 
 - Project: https://github.com/hyparam/hyparquet
-<!-- - Included version/commit: `<VERSION_OR_COMMIT>` -->
 - License: MIT
 
 The MIT License (MIT)
@@ -23,7 +22,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ## hyparquet-compressors
 
 - Project: https://github.com/hyparam/hyparquet-compressors
-<!-- - Included version/commit: `<VERSION_OR_COMMIT>` -->
 - License: MIT
 
 The MIT License (MIT)

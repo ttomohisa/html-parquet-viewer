@@ -10,7 +10,7 @@ Open the file in a modern browser, select or drop Parquet files, and inspect the
 ## Try it online
 
 Open the hosted viewer:  
-https://ttomohisa.github.io/html-parquet-viewer/parquet-viewer.html
+[parquet-viewer.html](https://ttomohisa.github.io/html-parquet-viewer/parquet-viewer.html)
 
 Your files stay in your browser. Nothing is uploaded.
 
@@ -19,7 +19,7 @@ Your files stay in your browser. Nothing is uploaded.
 Parquet files often need a quick inspection on locked-down workstations, air-gapped networks, or during data-pipeline debugging. This viewer is designed for that job:
 
 - **Single-file distribution** — copy one HTML file anywhere
-- **Offline and private** — files stay in your browser
+- **Offline and private** — files stay in your browser, with network connections blocked by Content Security Policy
 - **Metadata-first preview** — reads the footer and only the requested preview range; it does not eagerly expand the whole file into memory
 - **No dependencies at runtime** — scripts, styles, and required codecs are embedded
 
@@ -29,7 +29,7 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 - Work with several files at once in closable tabs
 - Read Parquet v1 and v2 files
 - Support uncompressed, Snappy, Gzip, Brotli, LZ4, LZ4_RAW, and Zstandard data
-- Inspect file metadata, schema, row count, row groups, and codecs
+- Inspect file metadata (`created_by` and custom key/value metadata), schema, row count, row groups, and codecs
 - Browse preview rows without loading the entire file
 - Choose 50, 100, 250, 500, or 1,000 rows per page
 - Jump directly to a page and see `Page N of M`
@@ -37,7 +37,7 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 - Display concise type badges such as `text`, `int64`, `time`, and `decimal`
 - Distinguish `null` from an empty string without adding noise to empty cells
 - Sort the current preview page: ascending → descending → reset
-- Copy the current page as CSV
+- Download or copy the current page as CSV
 - Explain common read errors in actionable language
 
 ## Quick start
@@ -54,7 +54,7 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 
 - Paging reads the current range of rows from the local file.
 - Sorting and any future filtering are explicitly limited to the current preview page.
-- The `Copy CSV` action copies the visible page, including its current sort order.
+- The `Download CSV` and `Copy CSV` actions use the visible page, including its current sort order.
 - Opening a new tab does not upload or persist a file; closing/reloading the browser removes the in-memory session.
 
 ## UI notes
@@ -64,8 +64,9 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 | Click a column header | Ascending sort for the current page |
 | Click it again | Descending sort |
 | Click it a third time | Reset to the original read order |
-| Click **Schema** or **Data preview** | Collapse or expand that section |
-| Click **Copy CSV** | Copy the current preview page to the clipboard |
+| Click **Schema**, **File metadata**, or **Data preview** | Collapse or expand that section |
+| Click **Download CSV** | Download the current preview page as a UTF-8 CSV file |
+| Click **Copy CSV** | Copy the current preview page to the clipboard (with a local-file fallback) |
 | Enter a page number | Jump to that page |
 
 ## Supported formats
@@ -84,7 +85,7 @@ Support ultimately depends on the encodings used by the file and the embedded pa
 The distributable is deliberately a single generated HTML file. If you modify it directly, keep these principles intact:
 
 - Do not add external CDN or network dependencies.
-- Keep the Content Security Policy restrictive (`connect-src 'none'`).
+- Keep the Content Security Policy restrictive (`connect-src 'none'`) and do not comment it out.
 - Test with both small and large files, multiple row groups, and compressed input.
 - Test the file picker and multi-file drag-and-drop flows.
 
@@ -98,7 +99,7 @@ This distribution bundles or derives from third-party software, including
 [hyparquet](https://github.com/hyparam/hyparquet) and
 [hyparquet-compressors](https://github.com/hyparam/hyparquet-compressors).
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the applicable
-copyright notices, license texts, and included versions.
+copyright notices and license texts.
 
 “Apache”, “Apache Parquet”, and associated logos are trademarks of the Apache Software Foundation. This project is an independent viewer and is not affiliated with or endorsed by the Apache Software Foundation. Avoid presenting the bundled icon as an official project logo.
 

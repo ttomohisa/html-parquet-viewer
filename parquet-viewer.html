@@ -4,8 +4,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1">
-	<!-- <meta http-equiv="Content-Security-Policy"
-		content="default-src 'none'; connect-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:;"> -->
+	<meta http-equiv="Content-Security-Policy"
+		content="default-src 'none'; connect-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none';">
 	<title>HTML Parquet Viewer</title>
 
 	<link rel="icon" type="image/svg+xml"
@@ -13,15 +13,15 @@
 
 	<style>
 		:root {
-			color-scheme: dark;
-			--bg: #10141d;
-			--panel: #181e2b;
-			--line: #2d374a;
-			--text: #e7edf8;
-			--muted: #aab7cf;
-			--accent: #71a9ff;
-			--ok: #65d39b;
-			--error: #ff8989
+			color-scheme: light;
+			--bg: #f7f9fc;
+			--panel: #ffffff;
+			--line: #dbe3ee;
+			--text: #172033;
+			--muted: #64748b;
+			--accent: #2563eb;
+			--ok: #15803d;
+			--error: #b91c1c
 		}
 
 		* {
@@ -52,16 +52,17 @@
 		}
 
 		#drop {
-			border: 2px dashed #476385;
+			border: 2px dashed #cbd5e1;
 			border-radius: 12px;
 			background: var(--panel);
 			padding: 34px;
 			text-align: center;
+			box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
 			transition: .15s
 		}
 
 		#drop.drag {
-			background: #202d42;
+			background: #eff6ff;
 			border-color: var(--accent)
 		}
 
@@ -73,9 +74,9 @@
 			display: inline-block;
 			width: 92px;
 			margin-left: 5px;
-			background: #202939;
+			background: #ffffff;
 			color: var(--text);
-			border: 1px solid #43536d;
+			border: 1px solid #cbd5e1;
 			border-radius: 6px;
 			padding: 7px 8px
 		}
@@ -84,7 +85,7 @@
 			display: inline-block;
 			cursor: pointer;
 			background: var(--accent);
-			color: #081323;
+			color: #ffffff;
 			padding: 9px 14px;
 			border-radius: 7px;
 			font-weight: 700
@@ -183,8 +184,8 @@
 		th {
 			position: sticky;
 			top: 0;
-			background: #202939;
-			color: #c9d9f4
+			background: #ffffff;
+			color: #334155
 		}
 
 		tr:last-child td {
@@ -204,15 +205,23 @@
 
 		button,
 		select {
-			background: #202939;
+			background: #ffffff;
 			color: var(--text);
-			border: 1px solid #43536d;
+			border: 1px solid #cbd5e1;
 			border-radius: 6px;
 			padding: 7px 10px
 		}
 
 		button:disabled {
 			opacity: .45
+		}
+
+		button:focus-visible,
+		select:focus-visible,
+		input:focus-visible,
+		.button:focus-visible {
+			outline: 3px solid rgb(37 99 235 / 20%);
+			outline-offset: 2px
 		}
 
 		@media(max-width:600px) {
@@ -238,16 +247,16 @@
 			align-items: center;
 			gap: 7px;
 			max-width: 260px;
-			background: #202939;
+			background: #ffffff;
 			color: var(--muted);
-			border: 1px solid #43536d;
+			border: 1px solid #cbd5e1;
 			border-radius: 7px;
 			padding: 7px 9px;
 			cursor: pointer
 		}
 
 		.tab.active {
-			background: #263a59;
+			background: #eff6ff;
 			border-color: var(--accent);
 			color: var(--text)
 		}
@@ -299,9 +308,9 @@
 			max-width: 100%;
 			margin-top: 3px;
 			padding: 1px 5px;
-			border: 1px solid #536883;
+			border: 1px solid #cbd5e1;
 			border-radius: 999px;
-			color: #a9c8f4;
+			color: #475569;
 			font: 10px/1.35 system-ui, sans-serif;
 			overflow: hidden;
 			text-overflow: ellipsis
@@ -317,13 +326,13 @@
 		}
 
 		.null-value {
-			color: #ffb0b0;
-			background: #3a242c
+			color: var(--muted);
+			background: transparent
 		}
 
 		.empty-value {
-			color: #d5c49a;
-			background: #342f23
+			color: var(--muted);
+			background: transparent
 		}
 
 		#copy-csv.copied {
@@ -370,10 +379,10 @@
 		.page-nav {
 			display: flex;
 			align-items: center;
-			border: 1px solid #43536d;
+			border: 1px solid #cbd5e1;
 			border-radius: 7px;
 			overflow: hidden;
-			background: #202939
+			background: #ffffff
 		}
 
 		.page-nav button {
@@ -386,7 +395,7 @@
 		}
 
 		.page-nav button+button {
-			border-left: 1px solid #43536d
+			border-left: 1px solid #cbd5e1
 		}
 
 		#page-label {
@@ -401,7 +410,7 @@
 		.null-value {
 			color: var(--muted);
 			background: transparent;
-			border: 1px dashed #536071;
+			border: 1px dashed #cbd5e1;
 			font-weight: 400
 		}
 
@@ -442,7 +451,7 @@
 		}
 
 		#data-body tr:hover td {
-			background: #202c40
+			background: #f8fafc
 		}
 
 		#data-head th[data-column] {
@@ -451,7 +460,7 @@
 		}
 
 		#data-head th[data-column]:hover {
-			background: #293b57
+			background: #eef4ff
 		}
 
 		.sort-indicator {
@@ -491,7 +500,7 @@
 		<div id="summary" hidden></div>
 		<p id="memory-note" hidden>Preview reads only the current page from the file. The full file is not expanded into
 			memory.</p>
-		<section class="collapsible" id="schema-section">
+		<section class="collapsible" id="schema-section" hidden>
 			<div class="section-title"><button class="section-heading" aria-expanded="true"
 					aria-controls="schema-content">
 					<h2>Schema</h2><span class="section-chevron" aria-hidden="true">⌄</span>
@@ -511,12 +520,31 @@
 				</div>
 			</div>
 		</section>
-		<section class="collapsible" id="preview-section">
+		<section class="collapsible" id="metadata-section" hidden>
+			<div class="section-title"><button class="section-heading" aria-expanded="true"
+					aria-controls="metadata-content">
+					<h2>File metadata</h2><span class="section-chevron" aria-hidden="true">⌄</span>
+				</button></div>
+			<div id="metadata-content" class="section-content">
+				<div class="scroll">
+					<table>
+						<thead>
+							<tr>
+								<th>Key</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody id="metadata-body"></tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+		<section class="collapsible" id="preview-section" hidden>
 			<div class="section-title"><button class="section-heading" aria-expanded="true"
 					aria-controls="preview-content">
 					<h2>Data preview</h2><span class="section-chevron" aria-hidden="true">⌄</span>
 				</button>
-				<div class="section-actions"><button id="copy-csv" title="Copy the current preview page as CSV">Copy
+				<div class="section-actions"><button id="download-csv" title="Download the current preview page as CSV">Download CSV</button><button id="copy-csv" title="Copy the current preview page as CSV">Copy
 						CSV</button></div>
 			</div>
 			<p id="sort-note" hidden>Sorts this page only</p>
@@ -1520,24 +1548,28 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function se(e) { return go(e).replace(/[&<>'"]/g, t => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[t]) }
 		function po(e) { if (!e) return "0 B"; let t = ["B", "KB", "MB", "GB", "TB"], n = Math.min(Math.floor(Math.log(e) / Math.log(1024)), t.length - 1); return `${(e / 1024 ** n).toFixed(n ? 2 : 0)} ${t[n]}` }
 		function je(e, t = "") { let n = D("status"); n.textContent = e; n.className = t }
-		function busy(e) { D("prev").disabled = e || N.page === 0; D("next").disabled = e; D("page-size").disabled = e; D("row-jump").disabled = e; D("copy-csv").disabled = e }
-		function ho() { D("summary").hidden = !0; D("memory-note").hidden = !0; D("schema-body").innerHTML = ""; D("data-head").innerHTML = ""; D("data-body").innerHTML = ""; D("pager").hidden = !0 }
-		function Fr(e, t = "", n = []) { for (let r of e?.children || []) { let i = t ? `${t}.${r.element.name}` : r.element.name; n.push({ name: i, type: r.element.type || r.element.converted_type || r.element.logicalType || "group", repetition: r.element.repetition_type || "OPTIONAL" }); Fr(r, i, n) } return n }
+		function busy(e) { let noData = !N.lastColumns.length; D("prev").disabled = e || N.page === 0; D("next").disabled = e; D("page-size").disabled = e; D("row-jump").disabled = e; D("copy-csv").disabled = e || noData; D("download-csv").disabled = e || noData }
+		function ho() { D("summary").hidden = !0; D("memory-note").hidden = !0; D("schema-section").hidden = !0; D("metadata-section").hidden = !0; D("preview-section").hidden = !0; D("schema-body").innerHTML = ""; D("metadata-body").innerHTML = ""; D("data-head").innerHTML = ""; D("data-body").innerHTML = ""; D("pager").hidden = !0 }
+		function schemaType(e) { let logical = e.logical_type || e.logicalType; if (logical?.type === "INTEGER" && logical.bitWidth) return `${logical.isSigned === false ? "UINT" : "INT"}${logical.bitWidth}`; return logical?.type || e.converted_type || e.type || "group" }
+		function Fr(e, t = "", n = []) { for (let r of e?.children || []) { let i = t ? `${t}.${r.element.name}` : r.element.name; n.push({ name: i, type: schemaType(r.element), repetition: r.element.repetition_type || "OPTIONAL" }); Fr(r, i, n) } return n }
 		function wo(e) { let t = new Set; for (let n of e.row_groups || []) for (let r of n.columns || []) t.add(r.meta_data?.codec || "UNCOMPRESSED"); return [...t].join(", ") || "UNCOMPRESSED" }
-		function shortType(t) { let s = String(t || "value").toLowerCase().replaceAll("_", " "); if (s.includes("timestamp")) return "time"; if (s.includes("decimal")) return "decimal"; if (s.includes("int64")) return "int64"; if (s.includes("int32")) return "int32"; if (s.includes("double")) return "float64"; if (s.includes("float")) return "float32"; if (s.includes("boolean")) return "bool"; if (s.includes("utf8") || s.includes("string") || s.includes("byte array")) return "text"; if (s.includes("date")) return "date"; if (s.includes("list")) return "list"; if (s.includes("map")) return "map"; return s.replace("fixed len ", "").slice(0, 14) }
+		function shortType(t) { let s = String(t || "value").toLowerCase().replaceAll("_", " "); if (s.includes("timestamp")) return "time"; if (s.includes("decimal")) return "decimal"; if (s.includes("uint64")) return "uint64"; if (s.includes("uint32")) return "uint32"; if (s.includes("int64")) return "int64"; if (s.includes("int32")) return "int32"; if (s.includes("double")) return "float64"; if (s.includes("float")) return "float32"; if (s.includes("boolean")) return "bool"; if (s.includes("utf8") || s.includes("string") || s.includes("byte array")) return "text"; if (s.includes("date")) return "date"; if (s.includes("list")) return "list"; if (s.includes("map")) return "map"; return s.replace("fixed len ", "").slice(0, 14) }
 		function columnTypes() { let m = new Map; for (let f of Fr(N.schema)) { m.set(f.name, shortType(f.type)); m.set(f.name.split(".").at(-1), shortType(f.type)) } return m }
-		function mo() { let e = N.metadata, t = [["File", N.file.name], ["Size", po(N.file.size)], ["Rows", Number(e.num_rows).toLocaleString()], ["Row groups", (e.row_groups || []).length.toLocaleString()], ["Format", e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], ["Codecs", wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(r)}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || '<tr><td colspan="3">No fields found.</td></tr>' }
+		function mo() { let e = N.metadata, t = [["File", N.file.name], ["Size", po(N.file.size)], ["Rows", Number(e.num_rows).toLocaleString()], ["Row groups", (e.row_groups || []).length.toLocaleString()], ["Format", e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], ["Codecs", wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(r)}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; D("schema-section").hidden = !1; D("metadata-section").hidden = !1; D("preview-section").hidden = !1; D("page-size").value = String(N.pageSize); let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || '<tr><td colspan="3">No fields found.</td></tr>'; let meta = [["created_by", e.created_by], ...(e.key_value_metadata || []).map(r => [r.key, r.value])].filter(([, v]) => v !== undefined && v !== null && v !== ""); D("metadata-body").innerHTML = meta.map(([k, v]) => `<tr><td>${se(k)}</td><td title="${se(v)}">${se(v)}</td></tr>`).join("") || '<tr><td colspan="2">No file metadata found.</td></tr>' }
 		function saveActive() { if (activeTab) tabs.set(activeTab, { ...N }) } function renderTabs() { D("tabs").innerHTML = [...tabs].map(([id, t]) => `<button class="tab ${id === activeTab ? "active" : ""}" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span><span class="tab-close" title="Close ${se(t.file.name)}" data-close="${id}" aria-label="Close ${se(t.file.name)}">×</span></button>`).join("") }
 		function cell(v) { return v === null || v === undefined ? '<span class="null-value">null</span>' : v === "" ? '<span class="empty-value"></span>' : se(v) }
 		function friendlyError(err, stage) { let m = String(err?.message || err || ""); let l = m.toLowerCase(); if (l.includes("missing par1") || l.includes("does not begin") || l.includes("invalid footer") && stage === "header") return "This is not a Parquet file: missing PAR1 header."; if (l.includes("footer") || l.includes("truncated") || l.includes("metadata length") || l.includes("too short") || l.includes("end of input")) return "The file appears truncated or its Parquet footer is invalid."; if (l.includes("unsupported encoding") || l.includes("unsupported codec") || l.includes("unsupported compression") || l.includes("not supported")) return `This file uses an encoding or compression method not supported by this viewer: ${m}.`; if (l.includes("memory") || l.includes("allocation") || l.includes("out of") || l.includes("maximum call stack")) return "Preview could not be rendered. Try a smaller page size."; return stage === "preview" ? "Preview could not be rendered. Try a smaller page size." : `Could not read this file: ${m}` }
 		async function yt() { if (!N.file) return; let e = N.page * N.pageSize, t = Math.min(e + N.pageSize, N.rows); busy(!0); je(`Reading rows ${e.toLocaleString()}–${Math.max(e, t - 1).toLocaleString()} of ${N.rows.toLocaleString()}…`, "loading"); try { let n = await Jt({ file: N.file, compressors: hn, rowStart: e, rowEnd: t }), r = [...new Set(n.flatMap(i => Object.keys(i)))], types = columnTypes(); N.lastRows = n; N.lastColumns = r; renderTable(e, types); D("page-label").textContent = `Page ${N.page + 1} of ${Math.max(1, Math.ceil(N.rows / N.pageSize))}`; D("row-jump").value = N.page + 1; D("row-jump").max = Math.max(1, Math.ceil(N.rows / N.pageSize)); D("pager").hidden = !1; je(`Ready — previewing ${Math.max(0, t - e).toLocaleString()} rows only.`, "ok"); saveActive() } catch (err) { console.error(err); je(friendlyError(err, "preview"), "error") } finally { busy(!1); D("next").disabled = t >= N.rows } }
 		function compareValues(a, b) { let an = a === null || a === undefined, bn = b === null || b === undefined; if (an || bn) return an === bn ? 0 : an ? 1 : -1; if (a instanceof Date) a = a.getTime(); if (b instanceof Date) b = b.getTime(); if (typeof a === "number" && typeof b === "number") return a - b; let ad = Date.parse(a), bd = Date.parse(b); if (typeof a === "string" && typeof b === "string" && !Number.isNaN(ad) && !Number.isNaN(bd) && /^\d{4}-\d{2}-\d{2}/.test(a) && /^\d{4}-\d{2}-\d{2}/.test(b)) return ad - bd; return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" }) }
-		function renderTable(start, types) { let rows = [...N.lastRows], cols = N.lastColumns; if (N.sortColumn) rows.sort((a, b) => N.sortDirection * compareValues(a[N.sortColumn], b[N.sortColumn])); D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => `<th data-column="${se(c)}" title="Click: ascending · click again: descending · third click: reset">${se(c)}${N.sortColumn === c ? `<span class="sort-indicator">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></th>`).join("") + "</tr>"; D("data-body").innerHTML = rows.map((row, i) => `<tr><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || "<tr><td>No rows in this range.</td></tr>"; D("sort-note").hidden = !N.sortColumn; D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => { let c = th.dataset.column; if (N.sortColumn !== c) { N.sortColumn = c; N.sortDirection = 1 } else if (N.sortDirection === 1) { N.sortDirection = -1 } else { N.sortColumn = null; N.sortDirection = 1 } renderTable(start, types); saveActive() }) }
+		function visibleRows() { let rows = [...N.lastRows]; if (N.sortColumn) rows.sort((a, b) => N.sortDirection * compareValues(a[N.sortColumn], b[N.sortColumn])); return rows }
+		function renderTable(start, types) { let rows = visibleRows(), cols = N.lastColumns; D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => `<th data-column="${se(c)}" title="Click: ascending · click again: descending · third click: reset">${se(c)}${N.sortColumn === c ? `<span class="sort-indicator">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></th>`).join("") + "</tr>"; D("data-body").innerHTML = rows.map((row, i) => `<tr><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || "<tr><td>No rows in this range.</td></tr>"; D("sort-note").hidden = !N.sortColumn; D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => { let c = th.dataset.column; if (N.sortColumn !== c) { N.sortColumn = c; N.sortDirection = 1 } else if (N.sortDirection === 1) { N.sortDirection = -1 } else { N.sortColumn = null; N.sortDirection = 1 } renderTable(start, types); saveActive() }) }
 		async function activate(id) { let session = tabs.get(id); if (!session) return; activeTab = id; Object.assign(N, session); ho(); mo(); renderTabs(); await yt() }
-		async function openOne(e) { let id = `file-${Date.now()}-${Math.random().toString(36).slice(2)}`, file = { name: e.name, size: e.size, byteLength: e.size, slice: async (start, end) => await e.slice(start, end).arrayBuffer() }; activeTab = id; Object.assign(N, { file, metadata: null, schema: null, page: 0, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1 }); tabs.set(id, { ...N }); renderTabs(); ho(); busy(!0); je("Reading Parquet metadata…", "loading"); try { let t = new Uint8Array(await file.slice(0, 4)); if (String.fromCharCode(...t) !== "PAR1") throw new Error("missing PAR1 header"); N.metadata = await Oe(file); N.schema = J(N.metadata); N.rows = Number(N.metadata.num_rows); mo(); saveActive(); renderTabs(); await yt() } catch (t) { console.error(t); tabs.delete(id); activeTab = tabs.keys().next().value || null; if (activeTab) await activate(activeTab); else { ho(); renderTabs() } je(friendlyError(t, "header"), "error") } finally { busy(!1) } }
+		async function openOne(e) { let id = `file-${Date.now()}-${Math.random().toString(36).slice(2)}`, file = { name: e.name, size: e.size, byteLength: e.size, slice: async (start, end) => await e.slice(start, end).arrayBuffer() }, pageSize = N.pageSize || 100; activeTab = id; Object.assign(N, { file, metadata: null, schema: null, page: 0, pageSize, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1 }); tabs.set(id, { ...N }); renderTabs(); ho(); busy(!0); je("Reading Parquet metadata…", "loading"); try { let t = new Uint8Array(await file.slice(0, 4)); if (String.fromCharCode(...t) !== "PAR1") throw new Error("missing PAR1 header"); N.metadata = await Oe(file); N.schema = J(N.metadata); N.rows = Number(N.metadata.num_rows); mo(); saveActive(); renderTabs(); await yt() } catch (t) { console.error(t); tabs.delete(id); activeTab = tabs.keys().next().value || null; if (activeTab) await activate(activeTab); else { ho(); renderTabs() } je(friendlyError(t, "header"), "error") } finally { busy(!1) } }
 		async function Rr(files) { for (let e of [...files || []]) await openOne(e) }
-		function csv() { let q = v => v == null ? "" : String(v).replaceAll('"', '""'), cols = N.lastColumns, lines = [cols.map(q => `"${q}"`).join(",")]; for (let r of N.lastRows) lines.push(cols.map(c => `"${q(r[c])}"`).join(",")); return lines.join("\r\n") }
-		D("file").addEventListener("change", e => { Rr(e.target.files); e.target.value = "" }); D("drop").addEventListener("dragover", e => { e.preventDefault(); D("drop").classList.add("drag") }); D("drop").addEventListener("dragleave", () => D("drop").classList.remove("drag")); D("drop").addEventListener("drop", e => { e.preventDefault(); D("drop").classList.remove("drag"); Rr(e.dataTransfer.files) }); D("tabs").onclick = async e => { let close = e.target.closest("[data-close]"); if (close) { let id = close.dataset.close, was = id === activeTab; tabs.delete(id); if (was) { activeTab = tabs.keys().next().value || null; if (activeTab) await activate(activeTab); else ho() } renderTabs(); return } let tab = e.target.closest("[data-tab]"); if (tab && tab.dataset.tab !== activeTab) { saveActive(); await activate(tab.dataset.tab) } }; D("prev").onclick = async () => { N.page--; await yt() }; D("next").onclick = async () => { N.page++; await yt() }; D("page-size").onchange = async e => { N.pageSize = Number(e.target.value); N.page = 0; await yt() }; D("row-jump").onchange = async e => { let r = Math.max(1, Math.min(Math.ceil(N.rows / N.pageSize), Number(e.target.value) || 1)); N.page = r - 1; await yt() }; D("row-jump").onkeydown = e => { if (e.key === "Enter") e.target.onchange(e) }; D("copy-csv").onclick = async () => { try { await navigator.clipboard.writeText(csv()); let b = D("copy-csv"), old = b.textContent; b.textContent = "Copied"; b.classList.add("copied"); setTimeout(() => { b.textContent = old; b.classList.remove("copied") }, 1500) } catch (e) { je("Could not copy CSV. Your browser may block clipboard access.", "error") } }; document.querySelectorAll(".section-heading").forEach(b => b.onclick = () => { let content = D(b.getAttribute("aria-controls")), shown = !content.hidden; content.hidden = shown; b.setAttribute("aria-expanded", String(!shown)) }); je(`Ready — supports ${Qr}.`, "ok");
+		function csv() { let q = v => go(v).replaceAll('"', '""'), cols = N.lastColumns, lines = [cols.map(q => `"${q}"`).join(",")]; for (let r of visibleRows()) lines.push(cols.map(c => `"${q(r[c])}"`).join(",")); return lines.join("\r\n") }
+		async function copyText(text) { if (navigator.clipboard?.writeText && window.isSecureContext) return navigator.clipboard.writeText(text); let area = document.createElement("textarea"); area.value = text; area.setAttribute("readonly", ""); area.style.position = "fixed"; area.style.opacity = "0"; document.body.append(area); area.select(); let ok = document.execCommand("copy"); area.remove(); if (!ok) throw new Error("copy command failed") }
+		function downloadCsv() { let blob = new Blob(["\ufeff", csv()], { type: "text/csv;charset=utf-8" }), url = URL.createObjectURL(blob), a = document.createElement("a"), base = N.file.name.replace(/\.parquet$/i, "") || "parquet-preview"; a.href = url; a.download = `${base}-page-${N.page + 1}.csv`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 0) }
+		D("file").addEventListener("change", e => { Rr(e.target.files); e.target.value = "" }); D("drop").addEventListener("dragover", e => { e.preventDefault(); D("drop").classList.add("drag") }); D("drop").addEventListener("dragleave", () => D("drop").classList.remove("drag")); D("drop").addEventListener("drop", e => { e.preventDefault(); D("drop").classList.remove("drag"); Rr(e.dataTransfer.files) }); D("tabs").onclick = async e => { let close = e.target.closest("[data-close]"); if (close) { let id = close.dataset.close, was = id === activeTab; tabs.delete(id); if (was) { activeTab = tabs.keys().next().value || null; if (activeTab) await activate(activeTab); else { ho(); je(`Ready — supports ${Qr}.`, "ok") } } renderTabs(); return } let tab = e.target.closest("[data-tab]"); if (tab && tab.dataset.tab !== activeTab) { saveActive(); await activate(tab.dataset.tab) } }; D("prev").onclick = async () => { N.page--; await yt() }; D("next").onclick = async () => { N.page++; await yt() }; D("page-size").onchange = async e => { N.pageSize = Number(e.target.value); N.page = 0; await yt() }; D("row-jump").onchange = async e => { let r = Math.max(1, Math.min(Math.ceil(N.rows / N.pageSize), Number(e.target.value) || 1)); N.page = r - 1; await yt() }; D("row-jump").onkeydown = e => { if (e.key === "Enter") e.target.onchange(e) }; D("download-csv").onclick = () => { try { downloadCsv() } catch (e) { console.error(e); je("Could not download CSV.", "error") } }; D("copy-csv").onclick = async () => { try { await copyText(csv()); let b = D("copy-csv"), old = b.textContent; b.textContent = "Copied"; b.classList.add("copied"); setTimeout(() => { b.textContent = old; b.classList.remove("copied") }, 1500) } catch (e) { console.error(e); je("Could not copy CSV. Use Download CSV instead.", "error") } }; document.querySelectorAll(".section-heading").forEach(b => b.onclick = () => { let content = D(b.getAttribute("aria-controls")), shown = !content.hidden; content.hidden = shown; b.setAttribute("aria-expanded", String(!shown)) }); ho(); je(`Ready — supports ${Qr}.`, "ok");
 	</script>
 
 <!--
