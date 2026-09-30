@@ -1,0 +1,9 @@
+{
+  "name": "bk-previews",
+  "compatibility_date": "2026-09-29",
+  "preview_urls": true,
+  "assets": {
+    "directory": "./preview-dist"
+  },
+  "previews": {}
+}
