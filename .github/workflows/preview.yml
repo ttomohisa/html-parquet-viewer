@@ -1,0 +1,205 @@
+name: Deploy PR preview
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: cloudflare-pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  WRANGLER_VERSION: "4.135.0"
+
+jobs:
+  preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Validate and stage static app
+        shell: pwsh
+        run: |
+          if (!(Test-Path -LiteralPath "./parquet-viewer.html")) { throw "parquet-viewer.html is missing" }
+
+          $html = Get-Content -Raw -Encoding UTF8 "./parquet-viewer.html"
+          if ($html -notmatch "connect-src 'none'") { throw "runtime network-blocking CSP is missing" }
+          if ($html -match '<script[^>]+src=["'']https?://') { throw "external runtime script source detected" }
+
+          Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "./preview-dist"
+          New-Item -ItemType Directory -Force -Path "./preview-dist" | Out-Null
+          Copy-Item -LiteralPath "./parquet-viewer.html" -Destination "./preview-dist/index.html"
+          Copy-Item -LiteralPath "./parquet-viewer.html" -Destination "./preview-dist/parquet-viewer.html"
+          Write-Host "Staged HTML Parquet Viewer preview."
+
+      - name: Check Cloudflare preview credentials
+        id: cloudflare
+        shell: pwsh
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          $configured = -not [string]::IsNullOrWhiteSpace($env:CLOUDFLARE_API_TOKEN) -and
+            -not [string]::IsNullOrWhiteSpace($env:CLOUDFLARE_ACCOUNT_ID)
+
+          "configured=$($configured.ToString().ToLowerInvariant())" |
+            Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+          if (-not $configured) {
+            Write-Host "::notice::Cloudflare PR Preview skipped because CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID is not configured."
+          }
+
+      - name: Create or update Cloudflare Preview
+        id: preview
+        if: steps.cloudflare.outputs.configured == 'true'
+        shell: pwsh
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          $env:CLOUDFLARE_API_TOKEN = $env:CLOUDFLARE_API_TOKEN.Trim()
+          $env:CLOUDFLARE_ACCOUNT_ID = $env:CLOUDFLARE_ACCOUNT_ID.Trim()
+          $env:NO_COLOR = "1"
+
+          if ($env:CLOUDFLARE_ACCOUNT_ID -notmatch '^[A-Za-z0-9_-]+$') {
+            throw "CLOUDFLARE_ACCOUNT_ID contains invalid characters. Save only the Account ID value in the GitHub secret, without quotes or extra text."
+          }
+
+          $previewName = "r${{ github.event.repository.id }}-pr-${{ github.event.pull_request.number }}"
+          $stdoutPath = Join-Path $env:RUNNER_TEMP "wrangler-preview.json"
+          $stderrPath = Join-Path $env:RUNNER_TEMP "wrangler-preview.stderr.log"
+
+          Write-Host "Preview name: $previewName"
+
+          $arguments = @(
+            "--yes"
+            "wrangler@$env:WRANGLER_VERSION"
+            "preview"
+            "--config"
+            "wrangler.preview.jsonc"
+            "--name"
+            $previewName
+            "--json"
+          )
+
+          $process = Start-Process -FilePath "npx.cmd" `
+            -ArgumentList $arguments `
+            -NoNewWindow `
+            -Wait `
+            -PassThru `
+            -RedirectStandardOutput $stdoutPath `
+            -RedirectStandardError $stderrPath
+
+          if (Test-Path $stderrPath) {
+            $stderrText = Get-Content -Raw -Encoding UTF8 $stderrPath
+            if (-not [string]::IsNullOrWhiteSpace($stderrText)) {
+              Write-Host $stderrText
+            }
+          }
+
+          if ($process.ExitCode -ne 0) {
+            throw "Cloudflare Preview deployment failed with exit code $($process.ExitCode)."
+          }
+
+          $stdoutBytes = [System.IO.File]::ReadAllBytes($stdoutPath)
+
+          if ($stdoutBytes.Length -ge 2 -and $stdoutBytes[0] -eq 0xFF -and $stdoutBytes[1] -eq 0xFE) {
+            $jsonText = [System.Text.Encoding]::Unicode.GetString($stdoutBytes)
+          } elseif ($stdoutBytes.Length -ge 2 -and $stdoutBytes[0] -eq 0xFE -and $stdoutBytes[1] -eq 0xFF) {
+            $jsonText = [System.Text.Encoding]::BigEndianUnicode.GetString($stdoutBytes)
+          } else {
+            $jsonText = [System.Text.Encoding]::UTF8.GetString($stdoutBytes)
+          }
+
+          $jsonStart = $jsonText.IndexOf('{')
+          $jsonEnd = $jsonText.LastIndexOf('}')
+
+          if ($jsonStart -lt 0 -or $jsonEnd -lt $jsonStart) {
+            throw "Wrangler completed successfully but did not return a JSON object."
+          }
+
+          $jsonText = $jsonText.Substring($jsonStart, $jsonEnd - $jsonStart + 1)
+          $result = $jsonText | ConvertFrom-Json
+          $previewUrl = [string]$result.preview.urls[0]
+
+          if ([string]::IsNullOrWhiteSpace($previewUrl)) {
+            throw "Wrangler did not return a Preview URL."
+          }
+
+          "preview_url=$previewUrl" |
+            Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "preview_name=$previewName" |
+            Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+          Write-Host "Preview URL: $previewUrl"
+
+      - name: Probe Preview
+        if: steps.cloudflare.outputs.configured == 'true'
+        shell: pwsh
+        env:
+          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+        run: |
+          $lastError = $null
+
+          for ($attempt = 1; $attempt -le 12; $attempt++) {
+            try {
+              $response = Invoke-WebRequest -Uri $env:PREVIEW_URL -MaximumRedirection 5 -TimeoutSec 30
+
+              if ($response.StatusCode -eq 200) {
+                Write-Host "Preview returned HTTP 200."
+                exit 0
+              }
+
+              $lastError = "HTTP $($response.StatusCode)"
+            } catch {
+              $lastError = $_.Exception.Message
+            }
+
+            Write-Host "Preview is not ready yet (attempt $attempt/12): $lastError"
+            Start-Sleep -Seconds 5
+          }
+
+          throw "Preview did not become ready: $lastError"
+
+      - name: Comment Preview URL
+        if: steps.cloudflare.outputs.configured == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+          PREVIEW_NAME: ${{ steps.preview.outputs.preview_name }}
+        run: |
+          $body = @"
+          ## Browser Kitty PR Preview
+
+          **[Previewを開く]($env:PREVIEW_URL)**
+
+          - Preview: ``$env:PREVIEW_NAME``
+          - Commit: ``${{ github.event.pull_request.head.sha }}``
+          - Hosting: Cloudflare Workers Preview
+
+          このPRへ追加でpushすると同じPreview URLが最新版へ更新されます。PRを閉じるとPreviewは自動削除されます。
+          "@
+
+          gh pr comment "${{ github.event.pull_request.number }}" `
+            --body $body `
+            --edit-last `
+            --create-if-none
