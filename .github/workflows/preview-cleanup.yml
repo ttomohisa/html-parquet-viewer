@@ -1,0 +1,68 @@
+name: Cleanup PR preview
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  WRANGLER_VERSION: "4.135.0"
+
+jobs:
+  cleanup:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Check Cloudflare preview credentials
+        id: cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Cloudflare Preview cleanup skipped because credentials are not configured."
+          fi
+
+      - name: Delete Cloudflare Preview
+        if: steps.cloudflare.outputs.configured == 'true'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          export CLOUDFLARE_API_TOKEN="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          export CLOUDFLARE_ACCOUNT_ID="$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          PREVIEW_NAME="r${{ github.event.repository.id }}-pr-${{ github.event.pull_request.number }}"
+
+          if ! [[ "$CLOUDFLARE_ACCOUNT_ID" =~ ^[A-Za-z0-9_-]+$ ]]; then
+            echo "::warning::Cloudflare Preview cleanup skipped because CLOUDFLARE_ACCOUNT_ID contains invalid characters."
+            exit 0
+          fi
+
+          if ! npx --yes "wrangler@${WRANGLER_VERSION}" preview delete \
+            --config wrangler.preview.jsonc \
+            --name "$PREVIEW_NAME" \
+            --skip-confirmation; then
+            echo "::warning::Cloudflare Preview '$PREVIEW_NAME' could not be deleted (it may already be absent)."
+          fi
