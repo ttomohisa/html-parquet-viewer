@@ -36,7 +36,8 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 - Collapse the Schema and Data preview panels
 - Display concise type badges such as `text`, `int64`, `time`, and `decimal`
 - Distinguish `null` from an empty string without adding noise to empty cells
-- Sort the current preview page: ascending → descending → reset
+- Sort the current preview page: ascending → descending → reset, with exact signed BigInt ordering
+- Find literal values on the current page with matching-row highlights, counts, and previous/next navigation
 - Download or copy the current page as CSV
 - Explain common read errors in actionable language
 
@@ -53,7 +54,9 @@ There is no upload. Your selected files remain local to your browser session.
 The viewer is intentionally a **preview and inspection** tool, not a full query engine.
 
 - Paging reads the current range of rows from the local file.
-- Sorting and any future filtering are explicitly limited to the current preview page.
+- Sorting and finding are explicitly limited to the current preview page. Finding never filters rows or reads another page.
+- Find is case-insensitive and searches displayed cell text, including the `null` marker. Empty cells remain empty. Binary values are searched only through their displayed summary (the first 24 bytes), not their hidden bytes.
+- Each tab keeps its find query in memory. Page and sort changes reset the current match; loading or failed reads clear old results.
 - Files whose metadata cannot be read retain their own error tab, which can be closed.
 - Each tab retains its own completed preview and sort order. Switching back does not re-read a completed page.
 - CSV actions are disabled while a page is loading or after a read failure. Retry by entering the page number again or choosing a smaller page size.
@@ -71,6 +74,9 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 | Click **Download CSV** | Download the current preview page as a UTF-8 CSV file |
 | Click **Copy CSV** | Copy the current preview page to the clipboard (with a local-file fallback) |
 | Enter a page number | Jump to that page |
+| Type in **Find values on this page** | Highlight matching rows without changing CSV contents or order |
+| Press Enter / Shift+Enter in Find | Move to the next / previous matching row, wrapping within this page |
+| Press Escape in Find or click **Clear** | Remove the query and highlights |
 
 ## Supported formats
 
@@ -96,7 +102,7 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.
 
-The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
+The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Find checks cover literal/display-format matching, row navigation, tab/page ownership, and unchanged CSV/read behavior. BigInt checks cover signed INT64 extremes and adjacent values beyond Number precision. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
 
 These checks do not parse real Parquet, use a file picker or validate browser layout and interaction. The manual file and browser checks above are still needed before release.
 

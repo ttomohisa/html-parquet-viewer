@@ -474,6 +474,22 @@
 			color: var(--muted);
 			font-size: 12px
 		}
+		/* Page find styles */
+        .page-find {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 6px;
+        }
+        .page-find label { font-size: 13px; font-weight: 600; }
+        #find-query { flex: 1 1 180px; min-width: 0; }
+        #find-count, #find-help { font-size: 12px; color: var(--muted); }
+        #find-help { margin: 0 0 10px; }
+        #data-body tr.find-match td { background: #fef9c3; }
+        #data-body tr.find-current td { background: #fde68a; border-top: 2px solid #a16207; border-bottom: 2px solid #a16207; }
+        #data-body tr.find-current td.rownum { box-shadow: inset 4px 0 #a16207; }
+        /* /Page find styles */
 	</style>
 </head>
 
@@ -549,6 +565,17 @@
 			</div>
 			<p id="sort-note" hidden>Sorts this page only</p>
 			<div id="preview-content" class="section-content">
+                <!-- Page find controls -->
+                <div class="page-find" role="search" aria-label="Current page values">
+                    <label for="find-query">Find values on this page</label>
+                    <input id="find-query" type="search" autocomplete="off" spellcheck="false" aria-describedby="find-help find-count" disabled>
+                    <button id="find-prev" type="button" aria-label="Previous matching row" disabled>Previous match</button>
+                    <button id="find-next" type="button" aria-label="Next matching row" disabled>Next match</button>
+                    <button id="find-clear" type="button" disabled>Clear</button>
+                    <span id="find-count" role="status" aria-live="polite" aria-atomic="true"></span>
+                </div>
+                <p id="find-help">Finds literal text in displayed values on this page, ignoring case. Binary values include only their displayed summary (first 24 bytes). Enter: next match; Shift+Enter: previous; Escape: clear.</p>
+                <!-- /Page find controls -->
 				<div class="scroll">
 					<table>
 						<thead id="data-head"></thead>
@@ -1545,7 +1572,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 `), new m("", Gi, ""), new m("", v, "]"), new m("", v, " for "), new m("", Xi, ""), new m("", Hi, ""), new m("", v, " a "), new m("", v, " that "), new m(" ", k, ""), new m("", v, ". "), new m(".", v, ""), new m(" ", v, ", "), new m("", _i, ""), new m("", v, " with "), new m("", v, "'"), new m("", v, " from "), new m("", v, " by "), new m("", $i, ""), new m("", eo, ""), new m(" the ", v, ""), new m("", Vi, ""), new m("", v, ". The "), new m("", q, ""), new m("", v, " on "), new m("", v, " as "), new m("", v, " is "), new m("", Ki, ""), new m("", Br, "ing "), new m("", v, `
 	`), new m("", v, ":"), new m(" ", v, ". "), new m("", v, "ed "), new m("", no, ""), new m("", to, ""), new m("", zi, ""), new m("", v, "("), new m("", k, ", "), new m("", Ji, ""), new m("", v, " at "), new m("", v, "ly "), new m(" the ", v, " of "), new m("", Zi, ""), new m("", Cr, ""), new m(" ", k, ", "), new m("", k, '"'), new m(".", v, "("), new m("", q, " "), new m("", k, '">'), new m("", v, '="'), new m(" ", v, "."), new m(".com/", v, ""), new m(" the ", v, " of the "), new m("", k, "'"), new m("", v, ". This "), new m("", v, ","), new m(".", v, " "), new m("", k, "("), new m("", k, "."), new m("", v, " not "), new m(" ", v, '="'), new m("", v, "er "), new m(" ", q, " "), new m("", v, "al "), new m(" ", q, ""), new m("", v, "='"), new m("", q, '"'), new m("", k, ". "), new m(" ", v, "("), new m("", v, "ful "), new m(" ", k, ". "), new m("", v, "ive "), new m("", v, "less "), new m("", q, "'"), new m("", v, "est "), new m(" ", k, "."), new m("", q, '">'), new m(" ", v, "='"), new m("", k, ","), new m("", v, "ize "), new m("", q, "."), new m("\xC2\xA0", v, ""), new m(" ", v, ","), new m("", k, '="'), new m("", q, '="'), new m("", v, "ous "), new m("", q, ", "), new m("", k, "='"), new m(" ", k, ","), new m(" ", q, '="'), new m(" ", q, ", "), new m("", q, ","), new m("", q, "("), new m("", q, ". "), new m(" ", q, "."), new m("", q, "='"), new m(" ", q, ". "), new m(" ", k, '="'), new m(" ", q, "='"), new m(" ", k, "='")], br = mt.length; function vr(e, t) { return e[t] < 192 ? (e[t] >= 97 && e[t] <= 122 && (e[t] ^= 32), 1) : e[t] < 224 ? (e[t + 1] ^= 32, 2) : (e[t + 2] ^= 5, 3) } function xr(e, t, n, r, i) { let o = Er(), { prefix: s } = mt[i], { suffix: f } = mt[i], l = mt[i].transform, A = l < An ? 0 : l - (An - 1), c = t; A > r && (A = r); let a = 0; for (; a < s.length;)e[t++] = s[a++]; n += A, r -= A, l <= Cr && (r -= l); for (let p = 0; p < r; p++)e[t++] = o[n + p]; let u = t - r; if (l === k) vr(e, u); else if (l === q) for (; r > 0;) { let p = vr(e, u); u += p, r -= p } let h = 0; for (; h < f.length;)e[t++] = f[h++]; return t - c } var ro = 256, io = 704, oo = 26, Lr = 6, Sr = 2, cn = 16, so = new Uint8Array([3, 2, 1, 0, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2]), fo = new Int8Array([0, 0, 0, 0, -1, 1, -2, 2, -3, 3, -1, 1, -2, 2, -3, 3]), ao = new Uint32Array([0, 0, 0, 0, 0, 4096, 9216, 21504, 35840, 44032, 53248, 63488, 74752, 87040, 93696, 100864, 104704, 106752, 108928, 113536, 115968, 118528, 119872, 121280, 122016]), lo = new Uint8Array([0, 0, 0, 0, 10, 10, 11, 11, 10, 10, 10, 10, 10, 9, 9, 8, 7, 7, 8, 7, 7, 6, 6, 5, 5]), Ao = 4, Ur = 24; function un(e, t) { let n = new Uint8Array(t), r = new fn(e), i = new an(n); return co(r, i), n } function co(e, t) { let n = 0, r = 0, i = 0, o = 0, s = [16, 15, 11, 4], f = 0, l = 0, A = 0, c = [new ce(0, 0), new ce(0, 0), new ce(0, 0)], a = 128 + G.READ_SIZE, u = new G(e); i = yr(u); let h = (1 << i) - 16, p = 1 << i, w = p - 1, d = new Uint8Array(p + a + Ur), g = p, y = [], I = []; for (let E = 0; E < 3 * 1080; E++)y[E] = new T(0, 0), I[E] = new T(0, 0); for (; !r;) { let E = 0, C = [1 << 28, 1 << 28, 1 << 28], B = [0], x = [1, 1, 1], S = [0, 1, 0, 1, 0, 1], F = [0], Q = 0; for (let b = 0; b < 3; b++)c[b].codes = [], c[b].htrees = new Uint32Array; u.readMoreInput(); let O = wr(u); if (E = O.meta_block_length, n + E > t.buffer.length) { let b = new Uint8Array(n + E); b.set(t.buffer), t.buffer = b } if (r = O.input_end, O.is_metadata) { for (Ir(u); E > 0; --E)u.readMoreInput(), u.readBits(8); continue } if (E === 0) continue; if (O.is_uncompressed) { u.bit_pos_ = u.bit_pos_ + 7 & -8, mr(t, E, n, d, w, u), n += E; continue } for (let b = 0; b < 3; b++)x[b] = ht(u) + 1, x[b] >= 2 && (Se(x[b] + 2, y, b * 1080, u), Se(oo, I, b * 1080, u), C[b] = Ke(I, b * 1080, u), F[b] = 1); u.readMoreInput(); let R = u.readBits(2), P = cn + (u.readBits(4) << R), U = (1 << R) - 1, L = P + (48 << R), M = new Uint8Array(x[0]); for (let b = 0; b < x[0]; b++)u.readMoreInput(), M[b] = u.readBits(2) << 1; let [he, we] = sn(x[0] << Lr, u), [me, Fe] = sn(x[2] << Sr, u); c[0] = new ce(ro, he), c[1] = new ce(io, x[1]), c[2] = new ce(L, me); for (let b = 0; b < 3; ++b)c[b].decode(u); let Re = 0, ye = 0, fe = M[B[0]], Te = Je[fe], Ne = Je[fe + 1], De = c[1].htrees[0]; for (; E > 0;) { let b; u.readMoreInput(), C[1] === 0 && (pt(x[1], y, 1, B, S, F, u), C[1] = Ke(I, 1080, u), De = c[1].htrees[B[1]]), C[1]--; let X = oe(c[1].codes, De, u), _ = X >> 6; _ >= 2 ? (_ -= 2, b = -1) : b = 0; let Ie = Ar[_] + (X >> 3 & 7), ae = ar[Ie], le = ae.offset + u.readBits(ae.nbits), It = cr[_] + (X & 7), wn = lr[It], Z = wn.offset + u.readBits(wn.nbits); l = d[n - 1 & w], A = d[n - 2 & w]; for (let z = 0; z < le; z++) { u.readMoreInput(), C[0] === 0 && (pt(x[0], y, 0, B, S, F, u), C[0] = Ke(I, 0, u), Q = B[0] << Lr, Re = Q, fe = M[B[0]], Te = Je[fe], Ne = Je[fe + 1]); let Ee = on[Te + l] | on[Ne + A], Be = we[Re + Ee]; C[0]--, A = l, l = oe(c[0].codes, c[0].htrees[Be], u), d[n & w] = l, (n & w) === w && t.write(d, p), n++ } if (E -= le, E <= 0) break; if (b < 0) { u.readMoreInput(), C[2] === 0 && (pt(x[2], y, 2, B, S, F, u), C[2] = Ke(I, 2 * 1080, u), ye = B[2] << Sr), C[2]--; let z = (Z > 4 ? 3 : Z - 2) & 255, Ee = Fe[ye + z]; if (b = oe(c[2].codes, c[2].htrees[Ee], u), b >= P) { b -= P; let Be = b & U; b >>= R; let _e = (b >> 1) + 1, Et = (2 + (b & 1) << _e) - 4; b = P + (Et + u.readBits(_e) << R) + Be } } let Pe = uo(b, s, f); if (Pe < 0) throw new Error("[BrotliDecompress] invalid distance"); n < h && o !== h ? o = n : o = h; let Xe = n & w; if (Pe > o) if (Z >= Ao && Z <= Ur) { let z = ao[Z], Ee = Pe - o - 1, Be = lo[Z], _e = (1 << Be) - 1, Et = Ee & _e, mn = Ee >> Be; if (z += Et * Z, mn < br) { let Bt = xr(d, Xe, z, Z, mn); if (Xe += Bt, n += Bt, E -= Bt, Xe >= g) { t.write(d, p); for (let $e = 0; $e < Xe - g; $e++)d[$e] = d[g + $e] } } else throw new Error("Invalid backward reference") } else throw new Error("Invalid backward reference"); else { if (b > 0 && (s[f & 3] = Pe, f++), Z > E) throw new Error("Invalid backward reference"); for (let z = 0; z < Z; z++)d[n & w] = d[n - Pe & w], (n & w) === w && t.write(d, p), n++, E-- } l = d[n - 1 & w], A = d[n - 2 & w] } n &= 1073741823 } t.write(d, n & w) } function uo(e, t, n) { return e < cn ? (n += so[e], n &= 3, t[n] + fo[e]) : e - cn + 1 } function gn(e, t) { let n = new Uint8Array(t); try { let r = 0, i = 0; for (; r < e.length - 8;) { let o = e[r++] << 24 | e[r++] << 16 | e[r++] << 8 | e[r++], s = e[r++] << 24 | e[r++] << 16 | e[r++] << 8 | e[r++]; if (e.length - r < s) throw new Error("lz4 not hadoop"); if (n.length < o) throw new Error("lz4 not hadoop"); if (dn(e.subarray(r, r + s), n, i) !== o) throw new Error("lz4 not hadoop"); if (r += s, i += o, r === e.length) return n } if (r < e.length) throw new Error("lz4 not hadoop") } catch (r) { if (r instanceof Error && r.message !== "lz4 not hadoop") throw r; dn(e, n, 0) } return n } function pn(e, t) { let n = new Uint8Array(t); return dn(e, n, 0), n } function dn(e, t, n) { let r = n; for (let i = 0; i < e.length;) { let o = e[i++], s = o >> 4; if (s) { let u = s + 240; for (; u === 255;)s += u = e[i++]; if (t.set(e.subarray(i, i + s), r), r += s, i += s, i >= e.length) return r - n } let f = e[i++] | e[i++] << 8; if (!f || f > r) throw new Error(`lz4 offset out of range ${f}`); let l = (o & 15) + 4, A = l + 240; for (; A === 255;)l += A = e[i++]; let c = r - f, a = r + l; for (; r < a;)t[r++] = t[c++] } return r - n } var hn = { SNAPPY: nr(), GZIP: (e, t) => Qe(e, new Uint8Array(t)), BROTLI: un, ZSTD: e => tr(e), LZ4: gn, LZ4_RAW: pn }; var D = e => document.getElementById(e), N = emptySession(), tabs = new Map, activeTab = null, copyRequest = 0, Qr = "UNCOMPRESSED, SNAPPY, GZIP, BROTLI, LZ4, LZ4_RAW, and ZSTD";
         function emptySession(file = null, pageSize = 100) {
-            return { file, metadata: null, schema: null, page: 0, pageSize, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1, request: 0, loading: false, completedPage: null, statusText: "", statusClass: "ok" };
+            return { file, metadata: null, schema: null, page: 0, pageSize, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1, request: 0, loading: false, completedPage: null, findQuery: "", findRows: [], findIndex: 0, statusText: "", statusClass: "ok" };
         }
         // A tab owns one stable session. Async work may only commit to that session
         // while it is still open and its request is still the newest one.
@@ -1553,7 +1580,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
         function activeSession(id, session) { return activeTab === id && N === session && ownsSession(id, session) }
         function exportable() { return !N.loading && N.completedPage?.file === N.file && N.completedPage.columns.length > 0 }
         function sessionStatus(session, text, kind) { session.statusText = text; session.statusClass = kind }
-        function clearPreview(session) { session.completedPage = null; session.lastRows = []; session.lastColumns = [] }
+        function clearPreview(session) { session.completedPage = null; session.lastRows = []; session.lastColumns = []; session.findRows = []; session.findIndex = 0 }
         function renderSession() {
             ho();
             D("sort-note").hidden = true;
@@ -1577,6 +1604,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                 D("row-jump").max = Math.max(1, Math.ceil(N.rows / N.pageSize));
                 D("pager").hidden = false;
             }
+            renderFindControls();
             busy(N.loading);
             je(N.statusText || `Ready — supports ${Qr}.`, N.statusClass);
         }
@@ -1632,9 +1660,68 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                 }
             }
         }
-		function compareValues(a, b) { let an = a === null || a === undefined, bn = b === null || b === undefined; if (an || bn) return an === bn ? 0 : an ? 1 : -1; if (a instanceof Date) a = a.getTime(); if (b instanceof Date) b = b.getTime(); if (typeof a === "number" && typeof b === "number") return a - b; let ad = Date.parse(a), bd = Date.parse(b); if (typeof a === "string" && typeof b === "string" && !Number.isNaN(ad) && !Number.isNaN(bd) && /^\d{4}-\d{2}-\d{2}/.test(a) && /^\d{4}-\d{2}-\d{2}/.test(b)) return ad - bd; return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" }) }
+		function compareValues(a, b) { let an = a === null || a === undefined, bn = b === null || b === undefined; if (an || bn) return an === bn ? 0 : an ? 1 : -1; if (a instanceof Date) a = a.getTime(); if (b instanceof Date) b = b.getTime(); if (typeof a === "number" && typeof b === "number") return a - b; if (typeof a === "bigint" && typeof b === "bigint") return a < b ? -1 : a > b ? 1 : 0; let ad = Date.parse(a), bd = Date.parse(b); if (typeof a === "string" && typeof b === "string" && !Number.isNaN(ad) && !Number.isNaN(bd) && /^\d{4}-\d{2}-\d{2}/.test(a) && /^\d{4}-\d{2}-\d{2}/.test(b)) return ad - bd; return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" }) }
 		function visibleRows() { let rows = [...N.lastRows]; if (N.sortColumn) rows.sort((a, b) => N.sortDirection * compareValues(a[N.sortColumn], b[N.sortColumn])); return rows }
-		function renderTable(start, types) { let rows = visibleRows(), cols = N.lastColumns; D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => `<th data-column="${se(c)}" title="Click: ascending · click again: descending · third click: reset">${se(c)}${N.sortColumn === c ? `<span class="sort-indicator">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></th>`).join("") + "</tr>"; D("data-body").innerHTML = rows.map((row, i) => `<tr><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || "<tr><td>No rows in this range.</td></tr>"; D("sort-note").hidden = !N.sortColumn; D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => { let c = th.dataset.column; if (N.sortColumn !== c) { N.sortColumn = c; N.sortDirection = 1 } else if (N.sortDirection === 1) { N.sortDirection = -1 } else { N.sortColumn = null; N.sortDirection = 1 } renderTable(start, types); }) }
+
+        // Finding is derived only from the active tab's current completed page.
+        // Use the same text representation as cell(), never hidden binary bytes.
+        function findable() {
+            let page = N.completedPage;
+            return activeSession(activeTab, N) && !N.loading && !!page && page.file === N.file && page.page === N.page && page.pageSize === N.pageSize;
+        }
+        function displayedValue(value) { return value == null ? "null" : go(value) }
+        function renderFindControls() {
+            let available = findable(), query = N.findQuery || "", matches = available ? N.findRows || [] : [];
+            D("find-query").value = query;
+            D("find-query").disabled = !available;
+            D("find-prev").disabled = !matches.length;
+            D("find-next").disabled = !matches.length;
+            D("find-clear").disabled = !query;
+            D("find-count").textContent = available && query ? (matches.length ? `${N.findIndex + 1} of ${matches.length} matching rows on this page` : "0 matching rows on this page") : "";
+        }
+        function scrollToFindMatch() {
+            if (findable() && N.findRows?.length) D("data-body").querySelector('[data-find-current="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+        function renderCurrentFind() {
+            if (findable()) renderTable(N.completedPage.rowStart, columnTypes());
+            else renderFindControls();
+        }
+        function changeFindQuery(query) {
+            N.findQuery = query;
+            N.findIndex = 0;
+            N.findRows = [];
+            renderCurrentFind();
+            scrollToFindMatch();
+        }
+        function moveFindMatch(direction) {
+            if (!findable() || !N.findRows?.length) return;
+            N.findIndex = (N.findIndex + direction + N.findRows.length) % N.findRows.length;
+            renderCurrentFind();
+            scrollToFindMatch();
+        }
+        function renderTable(start, types) {
+            let session = N, id = activeTab, page = N.completedPage;
+            let rows = visibleRows(), cols = N.lastColumns, query = (N.findQuery || "").toLowerCase();
+            N.findRows = [];
+            if (findable() && query) rows.forEach((row, index) => {
+                if (cols.some(column => displayedValue(row[column]).toLowerCase().includes(query))) N.findRows.push(index);
+            });
+            if (!N.findRows.length || !(N.findIndex >= 0 && N.findIndex < N.findRows.length)) N.findIndex = 0;
+            let matches = new Set(N.findRows), current = N.findRows[N.findIndex];
+            D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => `<th data-column="${se(c)}" title="Click: ascending · click again: descending · third click: reset">${se(c)}${N.sortColumn === c ? `<span class="sort-indicator">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></th>`).join("") + "</tr>";
+            D("data-body").innerHTML = rows.map((row, i) => `<tr${matches.has(i) ? ` class="find-match${i === current ? " find-current" : ""}"` : ""} data-find-row="${i}"${i === current ? ' data-find-current="true" aria-current="true"' : ""}><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || "<tr><td>No rows in this range.</td></tr>";
+            D("sort-note").hidden = !N.sortColumn;
+            renderFindControls();
+            D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => {
+                if (!activeSession(id, session) || N.completedPage !== page || !findable()) return;
+                let c = th.dataset.column;
+                if (N.sortColumn !== c) { N.sortColumn = c; N.sortDirection = 1 }
+                else if (N.sortDirection === 1) N.sortDirection = -1;
+                else { N.sortColumn = null; N.sortDirection = 1 }
+                N.findIndex = 0;
+                renderTable(start, types);
+            });
+        }
 		async function activate(id) {
             let session = tabs.get(id);
             if (!session) return;
@@ -1701,6 +1788,15 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             let tab = e.target.closest("[data-tab]");
             if (tab && tab.dataset.tab !== activeTab) await activate(tab.dataset.tab);
         };
+        D("find-query").oninput = e => { if (findable()) changeFindQuery(e.target.value) };
+        D("find-query").onkeydown = e => {
+            if (e.isComposing || e.keyCode === 229) return;
+            if (e.key === "Enter") { e.preventDefault(); moveFindMatch(e.shiftKey ? -1 : 1) }
+            else if (e.key === "Escape") { e.preventDefault(); changeFindQuery("") }
+        };
+        D("find-prev").onclick = () => moveFindMatch(-1);
+        D("find-next").onclick = () => moveFindMatch(1);
+        D("find-clear").onclick = () => { changeFindQuery(""); if (findable()) D("find-query").focus() };
         D("prev").onclick = async () => { N.page--; await yt() }; D("next").onclick = async () => { N.page++; await yt() }; D("page-size").onchange = async e => { N.pageSize = Number(e.target.value); N.page = 0; await yt() }; D("row-jump").onchange = async e => { let r = Math.max(1, Math.min(Math.ceil(N.rows / N.pageSize), Number(e.target.value) || 1)); N.page = r - 1; await yt() }; D("row-jump").onkeydown = e => { if (e.key === "Enter") e.target.onchange(e) }; D("download-csv").onclick = () => { try { downloadCsv() } catch (e) { console.error(e); je("Could not download CSV.", "error") } }; D("copy-csv").onclick = async () => {
             if (!exportable()) return;
             let session = N, page = N.completedPage, id = activeTab, request = ++copyRequest;
