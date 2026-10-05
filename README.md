@@ -54,6 +54,9 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 
 - Paging reads the current range of rows from the local file.
 - Sorting and any future filtering are explicitly limited to the current preview page.
+- Files whose metadata cannot be read retain their own error tab, which can be closed.
+- Each tab retains its own completed preview and sort order. Switching back does not re-read a completed page.
+- CSV actions are disabled while a page is loading or after a read failure. Retry by entering the page number again or choosing a smaller page size.
 - The `Download CSV` and `Copy CSV` actions use the visible page, including its current sort order.
 - Opening a new tab does not upload or persist a file; closing/reloading the browser removes the in-memory session.
 
@@ -88,6 +91,14 @@ The distributable is deliberately a single generated HTML file. If you modify it
 - Keep the Content Security Policy restrictive (`connect-src 'none'`) and do not comment it out.
 - Test with both small and large files, multiple row groups, and compressed input.
 - Test the file picker and multi-file drag-and-drop flows.
+
+### State regression checks
+
+Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.
+
+The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
+
+These checks do not parse real Parquet, use a file picker or validate browser layout and interaction. The manual file and browser checks above are still needed before release.
 
 ## License and third-party notices
 
