@@ -128,6 +128,11 @@
 			overflow: hidden
 		}
 
+		#summary[hidden],
+		#pager[hidden] {
+			display: none
+		}
+
 		.fact {
 			background: var(--panel);
 			padding: 11px
@@ -1621,7 +1626,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             D("copy-csv").disabled = !exportable();
             D("download-csv").disabled = !exportable();
         }
-		function ho() { D("summary").hidden = !0; D("memory-note").hidden = !0; D("schema-section").hidden = !0; D("metadata-section").hidden = !0; D("preview-section").hidden = !0; D("schema-body").innerHTML = ""; D("metadata-body").innerHTML = ""; D("data-head").innerHTML = ""; D("data-body").innerHTML = ""; D("pager").hidden = !0 }
+		function ho() { D("summary").hidden = !0; D("summary").innerHTML = ""; D("memory-note").hidden = !0; D("schema-section").hidden = !0; D("metadata-section").hidden = !0; D("preview-section").hidden = !0; D("schema-body").innerHTML = ""; D("metadata-body").innerHTML = ""; D("data-head").innerHTML = ""; D("data-body").innerHTML = ""; D("pager").hidden = !0 }
 		function schemaType(e) { let logical = e.logical_type || e.logicalType; if (logical?.type === "INTEGER" && logical.bitWidth) return `${logical.isSigned === false ? "UINT" : "INT"}${logical.bitWidth}`; return logical?.type || e.converted_type || e.type || "group" }
 		function Fr(e, t = "", n = []) { for (let r of e?.children || []) { let i = t ? `${t}.${r.element.name}` : r.element.name; n.push({ name: i, type: schemaType(r.element), repetition: r.element.repetition_type || "OPTIONAL" }); Fr(r, i, n) } return n }
 		function wo(e) { let t = new Set; for (let n of e.row_groups || []) for (let r of n.columns || []) t.add(r.meta_data?.codec || "UNCOMPRESSED"); return [...t].join(", ") || "UNCOMPRESSED" }

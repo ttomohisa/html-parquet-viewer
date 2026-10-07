@@ -19,15 +19,16 @@ test('embedded parser/codecs and notices retain their exact standalone byte cont
   assert.equal(sha256(html.slice(end)), '6365adc3517bc60a1e6bd471fedba80af09b51a1c8520d91b120a59971c8876d');
 });
 
-test('existing markup and restrictive CSP stay intact around the added find UI', () => {
+test('existing markup and restrictive CSP stay intact around the intentional UI additions', () => {
   const parserStart = html.indexOf('<script type="module">') + '<script type="module">'.length;
   let markup = html.slice(0, parserStart);
   const additions = [
+    /\t\t#summary\[hidden\],\n\t\t#pager\[hidden\] \{\n\t\t\tdisplay: none\n\t\t\}\n\n/g,
     /\t\t\/\* Page find styles \*\/[\s\S]*?\/\* \/Page find styles \*\/\n/g,
     /\n                <!-- Page find controls -->[\s\S]*?<!-- \/Page find controls -->/g
   ];
   for (const addition of additions) {
-    assert.equal([...markup.matchAll(addition)].length, 1, 'only the explicit find UI region is excluded');
+    assert.equal([...markup.matchAll(addition)].length, 1, 'only the exact hidden-display rule and explicit find UI regions are excluded');
     markup = markup.replace(addition, '');
   }
   assert.equal(sha256(markup), '86d011547887fdf7b561152ae223c82da3d590ade63bcf7d557ada349c4f4de1');
