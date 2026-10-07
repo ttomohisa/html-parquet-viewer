@@ -291,6 +291,57 @@ test('an active metadata failure remains visible without changing the completed 
   await h.close(id); assert.equal(h.ctx.csv(), '\"name\"\r\n\"pear\"');
 });
 
+test('an invalid file clears the previous summary, which returns only with its own tab', async () => {
+  const h = setup(); h.seed('a', 'orchard', 257);
+  h.run("tabs.get('a').metadata.row_groups = [{}, {}, {}, {}, {}]");
+  await loaded(h, 'a', [{ name: 'pear' }]);
+  const summary = h.D('summary').innerHTML, reads = h.reads.length;
+  assert.match(summary, /orchard\.parquet/);
+  assert.match(summary, /Rows<\/span><strong title="257">257<\/strong>/);
+  assert.match(summary, /Row groups<\/span><strong title="5">5<\/strong>/);
+  assert.equal(h.D('summary').hidden, false); assert.equal(h.D('pager').hidden, false);
+
+  await h.ctx.openOne({ name: 'invalid.parquet', size: 32,
+    slice: () => ({ arrayBuffer: async () => new Uint8Array([0, 0, 0, 0]).buffer }) });
+  const failedId = h.run('activeTab');
+  assert.equal(h.D('status').textContent, 'This is not a Parquet file: missing PAR1 header.');
+  assert.equal(h.D('summary').hidden, true); assert.equal(h.D('pager').hidden, true);
+  assert.equal(h.D('summary').innerHTML, '', 'failed tabs must not retain another file\'s facts');
+  assertExportsDisabled(h); assert.equal(h.metadataReads.length, 0);
+
+  await h.switchTab('a');
+  assert.equal(h.D('summary').hidden, false); assert.equal(h.D('pager').hidden, false);
+  assert.equal(h.D('summary').innerHTML, summary);
+  assert.equal(h.ctx.csv(), '"name"\r\n"pear"');
+  assert.equal(h.reads.length, reads, 'restoring a completed tab does not reread its page');
+  await h.close(failedId); await h.close('a');
+  assert.equal(h.run('tabs.size'), 0);
+  assert.equal(h.D('summary').hidden, true); assert.equal(h.D('pager').hidden, true);
+  assert.equal(h.D('summary').innerHTML, '', 'closing the final tab clears its facts');
+  assertExportsDisabled(h);
+});
+
+test('pending metadata clears previous facts until the selected file is ready', async () => {
+  const h = setup(); h.seed('a', 'orchard'); await loaded(h, 'a', [{ name: 'pear' }]);
+  const summary = h.D('summary').innerHTML;
+  const pending = h.ctx.openOne(fakeFile('meadow')); await tick();
+  const id = h.run('activeTab'), meta = h.metadataReads.at(-1);
+  assert.equal(h.D('status').className, 'loading');
+  assert.equal(h.D('summary').hidden, true); assert.equal(h.D('pager').hidden, true);
+  assert.equal(h.D('summary').innerHTML, '', 'pending metadata must not show the previous file');
+  assertExportsDisabled(h);
+
+  await h.switchTab('a'); assert.equal(h.D('summary').innerHTML, summary);
+  await h.switchTab(id);
+  assert.equal(h.D('summary').innerHTML, ''); assert.equal(h.D('summary').hidden, true);
+  meta.resolve(metadata('meadow', 3)); await tick();
+  h.reads.at(-1).resolve([{ name: 'clover' }]); await pending;
+  assert.equal(h.D('summary').hidden, false); assert.equal(h.D('pager').hidden, false);
+  assert.match(h.D('summary').innerHTML, /meadow\.parquet/);
+  assert.doesNotMatch(h.D('summary').innerHTML, /orchard\.parquet/);
+  assert.equal(h.ctx.csv(), '"name"\r\n"clover"');
+});
+
 test('a preview rendering failure clears the snapshot and reports a retryable error', async () => {
   const h = setup(); h.seed('a', 'orchard');
   await loaded(h, 'a', [{ name: new Date(NaN) }]);
