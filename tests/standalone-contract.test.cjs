@@ -31,7 +31,8 @@ test('existing markup and restrictive CSP stay intact around the intentional UI 
     assert.equal([...markup.matchAll(addition)].length, 1, 'only the exact hidden-display rule and explicit find UI regions are excluded');
     markup = markup.replace(addition, '');
   }
-  assert.equal(sha256(markup), '86d011547887fdf7b561152ae223c82da3d590ade63bcf7d557ada349c4f4de1');
+  // Icon normalization: only the logo and embedded favicon changed; runtime bytes stay pinned above.
+  assert.equal(sha256(markup), 'cc54b9b408d4d609ff48cd2928ad9d9cddc40ca919bb2dd4f46146f30eb093d1');
   assert.match(html, /content="default-src 'none'; connect-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none';"/);
   assert.doesNotMatch(html, /<script[^>]+src=["']https?:\/\//i);
 });
