@@ -98,6 +98,10 @@ The distributable is deliberately a single generated HTML file. If you modify it
 - Test with both small and large files, multiple row groups, and compressed input.
 - Test the file picker and multi-file drag-and-drop flows.
 
+### Catalog metadata
+
+`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The default UI is English. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
+
 ### State regression checks
 
 Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.

@@ -1,0 +1,13 @@
+{
+  "name": "HTML Parquet Viewer",
+  "slug": "parquet-viewer",
+  "versionPolicy": "unversioned",
+  "languages": [
+    "en"
+  ],
+  "license": "MIT",
+  "build": {
+    "output": "parquet-viewer.html",
+    "blockRuntimeNetwork": true
+  }
+}
