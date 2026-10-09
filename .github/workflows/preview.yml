@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Run regression tests
+        run: node --test
+
       - name: Validate and stage static app
         shell: pwsh
         run: |
