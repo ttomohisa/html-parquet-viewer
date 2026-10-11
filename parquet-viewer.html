@@ -87,7 +87,9 @@
 			background: var(--accent);
 			color: #ffffff;
 			padding: 9px 14px;
+			border: 0;
 			border-radius: 7px;
+			font: inherit;
 			font-weight: 700
 		}
 
@@ -247,23 +249,37 @@
 			padding-bottom: 2px
 		}
 
-		.tab {
+		.file-tab {
 			display: flex;
 			align-items: center;
-			gap: 7px;
+			flex: 0 0 auto;
 			max-width: 260px;
 			background: #ffffff;
 			color: var(--muted);
 			border: 1px solid #cbd5e1;
-			border-radius: 7px;
-			padding: 7px 9px;
-			cursor: pointer
+			border-radius: 7px
 		}
 
-		.tab.active {
+		.file-tab.active {
 			background: #eff6ff;
 			border-color: var(--accent);
 			color: var(--text)
+		}
+
+		.tab {
+			display: flex;
+			align-items: center;
+			min-width: 0;
+			border: 0;
+			padding: 7px 9px;
+			background: transparent;
+			color: inherit;
+			cursor: pointer
+		}
+
+		.tab:focus-visible,
+		.tab-close:focus-visible {
+			outline-offset: -3px
 		}
 
 		.tab-name {
@@ -273,8 +289,9 @@
 		}
 
 		.tab-close {
+			flex: none;
 			border: 0;
-			padding: 0 2px;
+			padding: 7px;
 			color: inherit;
 			background: transparent;
 			font-size: 17px;
@@ -468,6 +485,18 @@
 			background: #eef4ff
 		}
 
+		.column-sort {
+			display: block;
+			width: 100%;
+			border: 0;
+			padding: 0;
+			background: transparent;
+			color: inherit;
+			font: inherit;
+			text-align: left;
+			cursor: pointer
+		}
+
 		.sort-indicator {
 			color: var(--accent);
 			font-size: 12px;
@@ -515,7 +544,7 @@
 
 			<p>A self-contained, offline Parquet file viewer. Your files never leave this browser.</p>
 		</header>
-		<div id="drop"><label class="button" for="file">Choose Parquet files</label><input id="file" type="file"
+		<div id="drop"><button class="button" id="choose-file" type="button">Choose Parquet files</button><input id="file" type="file"
 				multiple accept=".parquet,application/octet-stream">
 			<div class="hint">Select one or more files, or drag and drop them here</div>
 		</div>
@@ -1636,7 +1665,18 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function shortType(t) { let s = String(t || "value").toLowerCase().replaceAll("_", " "); if (s.includes("timestamp")) return "time"; if (s.includes("decimal")) return "decimal"; if (s.includes("uint64")) return "uint64"; if (s.includes("uint32")) return "uint32"; if (s.includes("int64")) return "int64"; if (s.includes("int32")) return "int32"; if (s.includes("double")) return "float64"; if (s.includes("float")) return "float32"; if (s.includes("boolean")) return "bool"; if (s.includes("utf8") || s.includes("string") || s.includes("byte array")) return "text"; if (s.includes("date")) return "date"; if (s.includes("list")) return "list"; if (s.includes("map")) return "map"; return s.replace("fixed len ", "").slice(0, 14) }
 		function columnTypes() { let m = new Map; for (let f of Fr(N.schema)) { m.set(f.name, shortType(f.type)); m.set(f.name.split(".").at(-1), shortType(f.type)) } return m }
 		function mo() { let e = N.metadata, t = [["File", N.file.name], ["Size", po(N.file.size)], ["Rows", Number(e.num_rows).toLocaleString()], ["Row groups", (e.row_groups || []).length.toLocaleString()], ["Format", e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], ["Codecs", wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(r)}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; D("schema-section").hidden = !1; D("metadata-section").hidden = !1; D("preview-section").hidden = !1; D("page-size").value = String(N.pageSize); let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || '<tr><td colspan="3">No fields found.</td></tr>'; let meta = [["created_by", e.created_by], ...(e.key_value_metadata || []).map(r => [r.key, r.value])].filter(([, v]) => v !== undefined && v !== null && v !== ""); D("metadata-body").innerHTML = meta.map(([k, v]) => `<tr><td>${se(k)}</td><td title="${se(v)}">${se(v)}</td></tr>`).join("") || '<tr><td colspan="2">No file metadata found.</td></tr>' }
-		function renderTabs() { D("tabs").innerHTML = [...tabs].map(([id, t]) => `<button class="tab ${id === activeTab ? "active" : ""}" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span><span class="tab-close" title="Close ${se(t.file.name)}" data-close="${id}" aria-label="Close ${se(t.file.name)}">×</span></button>`).join("") }
+		function renderTabs() {
+            let focused = document.activeElement, ownedFocus = focused && D("tabs").contains(focused);
+            let kind = ownedFocus ? (focused.dataset.close ? "close" : focused.dataset.tab ? "tab" : null) : null;
+            let focusId = kind && focused.dataset[kind];
+            D("tabs").innerHTML = [...tabs].map(([id, t]) => `<div class="file-tab ${id === activeTab ? "active" : ""}" role="presentation"><button type="button" class="tab" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span></button><button type="button" class="tab-close" title="Close ${se(t.file.name)}" data-close="${id}" aria-label="Close ${se(t.file.name)}">×</button></div>`).join("");
+            if (kind) {
+                let target = [...D("tabs").querySelectorAll(`[data-${kind}]`)].find(button => button.dataset[kind] === focusId)
+                    || [...D("tabs").querySelectorAll("[data-tab]")].find(button => button.dataset.tab === activeTab)
+                    || D("choose-file");
+                target.focus();
+            }
+        }
 		function cell(v) { return v === null || v === undefined ? '<span class="null-value">null</span>' : v === "" ? '<span class="empty-value"></span>' : se(v) }
 		function friendlyError(err, stage) { let m = String(err?.message || err || ""); let l = m.toLowerCase(); if (l.includes("missing par1") || l.includes("does not begin") || l.includes("invalid footer") && stage === "header") return "This is not a Parquet file: missing PAR1 header."; if (l.includes("footer") || l.includes("truncated") || l.includes("metadata length") || l.includes("too short") || l.includes("end of input")) return "The file appears truncated or its Parquet footer is invalid."; if (l.includes("unsupported encoding") || l.includes("unsupported codec") || l.includes("unsupported compression") || l.includes("not supported")) return `This file uses an encoding or compression method not supported by this viewer: ${m}.`; if (l.includes("memory") || l.includes("allocation") || l.includes("out of") || l.includes("maximum call stack")) return "Preview could not be rendered. Try a smaller page size."; return stage === "preview" ? "Preview could not be rendered. Try a smaller page size." : `Could not read this file: ${m}` }
 		async function yt(session = N, id = activeTab) {
@@ -1716,18 +1756,27 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             });
             if (!N.findRows.length || !(N.findIndex >= 0 && N.findIndex < N.findRows.length)) N.findIndex = 0;
             let matches = new Set(N.findRows), current = N.findRows[N.findIndex];
-            D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => `<th data-column="${se(c)}" title="Click: ascending · click again: descending · third click: reset">${se(c)}${N.sortColumn === c ? `<span class="sort-indicator">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></th>`).join("") + "</tr>";
+            D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => {
+                let sorted = N.sortColumn === c, order = sorted ? (N.sortDirection === 1 ? "ascending" : "descending") : "none";
+                let action = !sorted ? "sort ascending" : N.sortDirection === 1 ? "sort descending" : "reset sort";
+                return `<th data-column="${se(c)}" aria-sort="${order}" title="Click: ascending · click again: descending · third click: reset"><button type="button" class="column-sort" data-sort="${se(c)}" aria-label="${se(c)}: ${action}">${se(c)}${sorted ? `<span class="sort-indicator" aria-hidden="true">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></button></th>`;
+            }).join("") + "</tr>";
             D("data-body").innerHTML = rows.map((row, i) => `<tr${matches.has(i) ? ` class="find-match${i === current ? " find-current" : ""}"` : ""} data-find-row="${i}"${i === current ? ' data-find-current="true" aria-current="true"' : ""}><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || "<tr><td>No rows in this range.</td></tr>";
             D("sort-note").hidden = !N.sortColumn;
             renderFindControls();
             D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => {
                 if (!activeSession(id, session) || N.completedPage !== page || !findable()) return;
-                let c = th.dataset.column;
+                let c = th.dataset.column, focused = document.activeElement, restoreFocus = focused && th.contains(focused);
                 if (N.sortColumn !== c) { N.sortColumn = c; N.sortDirection = 1 }
                 else if (N.sortDirection === 1) N.sortDirection = -1;
                 else { N.sortColumn = null; N.sortDirection = 1 }
                 N.findIndex = 0;
                 renderTable(start, types);
+                // Native Enter/Space clicks replace the focused header. Restore it now,
+                // without scheduling a later focus change over newer user intent.
+                if (restoreFocus && activeSession(id, session) && N.completedPage === page && (document.activeElement === document.body || document.activeElement === focused)) {
+                    [...D("data-head").querySelectorAll("[data-sort]")].find(button => button.dataset.sort === c)?.focus();
+                }
             });
         }
 		async function activate(id) {
@@ -1778,7 +1827,8 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function csv() { if (!exportable()) return ""; let q = v => go(v).replaceAll('"', '""'), cols = N.completedPage.columns, lines = [cols.map(q => `"${q}"`).join(",")]; for (let r of visibleRows()) lines.push(cols.map(c => `"${q(r[c])}"`).join(",")); return lines.join("\r\n") }
 		async function copyText(text) { if (navigator.clipboard?.writeText && window.isSecureContext) return navigator.clipboard.writeText(text); let area = document.createElement("textarea"); area.value = text; area.setAttribute("readonly", ""); area.style.position = "fixed"; area.style.opacity = "0"; document.body.append(area); area.select(); let ok = document.execCommand("copy"); area.remove(); if (!ok) throw new Error("copy command failed") }
 		function downloadCsv() { if (!exportable()) return; let page = N.completedPage, blob = new Blob(["\ufeff", csv()], { type: "text/csv;charset=utf-8" }), url = URL.createObjectURL(blob), a = document.createElement("a"), base = page.file.name.replace(/\.parquet$/i, "") || "parquet-preview"; a.href = url; a.download = `${base}-page-${page.page + 1}.csv`; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 0) }
-		D("file").addEventListener("change", e => { Rr(e.target.files); e.target.value = "" }); D("drop").addEventListener("dragover", e => { e.preventDefault(); D("drop").classList.add("drag") }); D("drop").addEventListener("dragleave", () => D("drop").classList.remove("drag")); D("drop").addEventListener("drop", e => { e.preventDefault(); D("drop").classList.remove("drag"); Rr(e.dataTransfer.files) }); D("tabs").onclick = async e => {
+		D("choose-file").onclick = () => D("file").click();
+        D("file").addEventListener("change", e => { Rr(e.target.files); e.target.value = "" }); D("drop").addEventListener("dragover", e => { e.preventDefault(); D("drop").classList.add("drag") }); D("drop").addEventListener("dragleave", () => D("drop").classList.remove("drag")); D("drop").addEventListener("drop", e => { e.preventDefault(); D("drop").classList.remove("drag"); Rr(e.dataTransfer.files) }); D("tabs").onclick = async e => {
             let close = e.target.closest("[data-close]");
             if (close) {
                 let id = close.dataset.close, wasActive = id === activeTab;
@@ -1787,7 +1837,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                     activeTab = null;
                     N = emptySession(null, N.pageSize);
                     let next = tabs.keys().next().value;
-                    if (next) await activate(next);
+                    if (next) { await activate(next); return }
                     else renderSession();
                 }
                 renderTabs();
