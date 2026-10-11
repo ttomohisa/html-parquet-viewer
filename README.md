@@ -67,9 +67,10 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 
 | Interaction | Behavior |
 |---|---|
-| Click a column header | Ascending sort for the current page |
+| Click a column header, or focus its button and press Enter / Space | Ascending sort for the current page |
 | Click it again | Descending sort |
 | Click it a third time | Reset to the original read order |
+| Tab to **Choose Parquet files** or a file's named close button, then press Enter / Space | Open the file picker or close that file |
 | Click **Schema**, **File metadata**, or **Data preview** | Collapse or expand that section |
 | Click **Download CSV** | Download the current preview page as a UTF-8 CSV file |
 | Click **Copy CSV** | Copy the current preview page to the clipboard (with a local-file fallback) |
@@ -106,9 +107,9 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.
 
-The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Find checks cover literal/display-format matching, row navigation, tab/page ownership, and unchanged CSV/read behavior. BigInt checks cover signed INT64 extremes and adjacent values beyond Number precision. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
+The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Find checks cover literal/display-format matching, row navigation, tab/page ownership, and unchanged CSV/read behavior. BigInt checks cover signed INT64 extremes and adjacent values beyond Number precision. Keyboard-control checks cover native-button markup, sort state announcements, actual click handlers and focus continuity across tab/header replacement, including pending reads and newer focus. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
 
-These checks do not parse real Parquet, use a file picker or validate browser layout and interaction. The manual file and browser checks above are still needed before release.
+These checks do not parse real Parquet, use a file picker or validate browser layout and native Tab / Enter / Space interaction. The manual file and browser checks above are still needed before release.
 
 ## License and third-party notices
 
