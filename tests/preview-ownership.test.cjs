@@ -21,7 +21,7 @@ function setup() {
   const elements = new Map(), reads = [], metadataReads = [], downloads = [], blobs = [], copied = [], timers = [];
   function element(id = '') {
     return { id, innerHTML: '', textContent: '', hidden: false, disabled: false, value: '', dataset: {}, style: {},
-      classList: { add() {}, remove() {} }, addEventListener() {}, setAttribute() {}, remove() {},
+      classList: { add() {}, remove() {} }, addEventListener() {}, setAttribute() {}, removeAttribute() {}, remove() {},
       click() { downloads.push(this.download); },
       querySelectorAll(selector) {
         this.headers = selector === 'th[data-column]' ? [...this.innerHTML.matchAll(/data-column="([^"]*)"/g)].map(m => ({ dataset: { column: m[1] } })) : [];
@@ -363,12 +363,17 @@ test('a background snapshot rendering failure stays on that tab when activated',
   await h.switchTab('b'); assert.equal(h.ctx.csv(), '"name"\r\n"clover"');
 });
 
-test('only the newest same-page clipboard operation may report its outcome', async () => {
+// Shared v1 blocks duplicate copying of one page. A newer page is a distinct
+// export scope and must stay available while the older clipboard request settles.
+test('only the newest different-page clipboard operation may report its outcome', async () => {
   for (const olderFails of [false, true]) {
     const h = setup(); h.seed('a', 'orchard'); await loaded(h, 'a', [{ name: 'pear' }]);
     const old = deferred(), newest = deferred(); let calls = 0;
     h.ctx.navigator.clipboard.writeText = () => calls++ ? newest.promise : old.promise;
-    const a = h.D('copy-csv').onclick(), b = h.D('copy-csv').onclick();
+    const a = h.D('copy-csv').onclick();
+    const next = h.D('next').onclick(); h.reads.at(-1).resolve([{name:'apple'}]); await next;
+    assert.equal(h.D('copy-csv').disabled, false);
+    const b = h.D('copy-csv').onclick(); assert.equal(calls, 2);
     newest.resolve(); await b; const before = h.snapshot();
     if (olderFails) old.reject(new Error('clipboard unavailable')); else old.resolve();
     await a; assert.equal(h.snapshot(), before);

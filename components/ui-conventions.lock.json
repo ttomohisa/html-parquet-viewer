@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "source": "htmlapps-template",
+  "files": {
+    "ui-conventions.js": "ba731c40bbdf9af051be391256c8b424581de79de49d30d575e2322d963612ff",
+    "ui-conventions.css": "80fbddfbe7023282389f781857ea7ec91d74d896d27f4f493fbd69d54795c338"
+  }
+}

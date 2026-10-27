@@ -1,0 +1,4 @@
+# Preserve the exact upstream component bytes required by the shared lock.
+components/ui-conventions.js -text
+components/ui-conventions.css -text
+components/ui-conventions.lock.json -text whitespace=cr-at-eol

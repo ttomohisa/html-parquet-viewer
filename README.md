@@ -38,7 +38,8 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 - Distinguish `null` from an empty string without adding noise to empty cells
 - Sort the current preview page: ascending → descending → reset, with exact signed BigInt ordering
 - Find literal values on the current page with matching-row highlights, counts, and previous/next navigation
-- Download or copy the current page as CSV
+- Save or copy every row on the current page as CSV, with an editable export filename
+- Switch the complete application and help between Japanese and English without resetting open files, pages, sorting or Find
 - Explain common read errors in actionable language
 
 ## Quick start
@@ -60,7 +61,7 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 - Files whose metadata cannot be read retain their own error tab, which can be closed.
 - Each tab retains its own completed preview and sort order. Switching back does not re-read a completed page.
 - CSV actions are disabled while a page is loading or after a read failure. Retry by entering the page number again or choosing a smaller page size.
-- The `Download CSV` and `Copy CSV` actions use the visible page, including its current sort order.
+- The `Save CSV` and `Copy CSV` actions use every row of the completed current page, including its current sort order. Find highlights never narrow the export. Edit the CSV filename beside the actions; a `.csv` extension is always used and filename characters unsafe on common desktop systems are replaced. The filename and CSV contents are captured when the action starts.
 - Opening a new tab does not upload or persist a file; closing/reloading the browser removes the in-memory session.
 
 ## UI notes
@@ -72,7 +73,7 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 | Click it a third time | Reset to the original read order |
 | Tab to **Choose Parquet files** or a file's named close button, then press Enter / Space | Open the file picker or close that file |
 | Click **Schema**, **File metadata**, or **Data preview** | Collapse or expand that section |
-| Click **Download CSV** | Download the current preview page as a UTF-8 CSV file |
+| Click **Save CSV** | Start downloading every row on the current preview page as a UTF-8 CSV file with the edited name |
 | Click **Copy CSV** | Copy the current preview page to the clipboard (with a local-file fallback) |
 | Enter a page number | Jump to that page |
 | Type in **Find values on this page** | Highlight matching rows without changing CSV contents or order |
@@ -101,15 +102,25 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ### Catalog metadata
 
-`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The default UI is English. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
+`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI and in-app help support Japanese and English. Startup uses a valid `?lang=ja` / `?lang=en`, then the shared `browser-kitty:ui-language:v1` preference, then the first supported browser language, then English. Only an explicit language choice attempts to write the shared preference. Storage failure still switches the current screen and shows a session-only language notice. Existing `lang` query parameters are updated without adding history. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
 
 ### State regression checks
 
-Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.
+Run `node scripts/embed-ui-conventions.cjs --check` and `node --test` with Node.js 22 or newer. No packages or parser build step are needed.
 
 The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Find checks cover literal/display-format matching, row navigation, tab/page ownership, and unchanged CSV/read behavior. BigInt checks cover signed INT64 extremes and adjacent values beyond Number precision. Keyboard-control checks cover native-button markup, sort state announcements, actual click handlers and focus continuity across tab/header replacement, including pending reads and newer focus. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
 
-These checks do not parse real Parquet, use a file picker or validate browser layout and native Tab / Enter / Space interaction. The manual file and browser checks above are still needed before release.
+The UI adapter tests also parse the bundled Snappy sample with the unchanged embedded parser, compare first/second/sorted-page CSV hashes captured from baseline `0e8c03c9dcb85f54f9db79d014c4693a4e55b69a`, reject invalid/truncated inputs, and verify bilingual controls, rejected storage, edited filenames, snapshots, BOM, duplicate-copy prevention and stale callbacks. The smaller existing tests continue to use parser-boundary doubles. These checks do not use a file picker or validate browser layout and native Tab / Enter / Space interaction. The manual file and browser checks above are still needed before release.
+
+### Shared UI embedding
+
+`parquet-viewer.html` remains the authoritative source and the only distributable. The exact upstream Browser Kitty UI v1.0.0 sources live in `components/`; `ui-conventions.lock.json` pins their SHA-256 hashes. Do not edit vendored components independently. The marked JS and CSS blocks are embedded in the HTML, with no runtime imports or requests.
+
+After copying an approved canonical component update, run `node scripts/embed-ui-conventions.cjs`, then `node scripts/embed-ui-conventions.cjs --check` and `node --test`. The helper fails on missing/duplicate markers or lock mismatches, and preserves the original parser/codecs byte region. The parser integrity check normalizes only Git checkout line endings. Tests also pin the bundled license notices. This helper does not regenerate the parser or split the application into another source format.
+
+A visible notice states that work disappears when the tab closes. Files, preview rows, page/sort/Find state and edited export names stay in memory only. Closing a file removes that session tab and leaves the original file unchanged. There is no automatic file persistence, project saving, backup, undo or stop-processing action. Ordinary download feedback says **Download started** because the browser cannot confirm completion on disk.
+
+Human release checks remain required: open the standalone file and offline HTTP viewer; try the picker and multi-file drop; validate native CSV delivery and clipboard fallback; switch both languages during reads and with Help open; verify keyboard focus, errors and controls at 360/390/768/1280 px. Automated DOM adapters do not establish those device/browser results.
 
 ## License and third-party notices
 

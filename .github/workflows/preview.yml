@@ -35,6 +35,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Verify embedded shared UI
+        run: node scripts/embed-ui-conventions.cjs --check
+
       - name: Run regression tests
         run: node --test
 

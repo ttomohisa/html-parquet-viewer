@@ -19,23 +19,11 @@ test('embedded parser/codecs and notices retain their exact standalone byte cont
   assert.equal(sha256(html.slice(end)), '6365adc3517bc60a1e6bd471fedba80af09b51a1c8520d91b120a59971c8876d');
 });
 
-test('existing markup and restrictive CSP stay intact around the intentional UI additions', () => {
-  const parserStart = html.indexOf('<script type="module">') + '<script type="module">'.length;
-  let markup = html.slice(0, parserStart);
-  const additions = [
-    /\t\t#summary\[hidden\],\n\t\t#pager\[hidden\] \{\n\t\t\tdisplay: none\n\t\t\}\n\n/g,
-    /\t\t\/\* Page find styles \*\/[\s\S]*?\/\* \/Page find styles \*\/\n/g,
-    /\n                <!-- Page find controls -->[\s\S]*?<!-- \/Page find controls -->/g
-  ];
-  for (const addition of additions) {
-    assert.equal([...markup.matchAll(addition)].length, 1, 'only the exact hidden-display rule and explicit find UI regions are excluded');
-    markup = markup.replace(addition, '');
-  }
-  // Pinned markup includes the icon, native picker and scoped tab/header button styles.
-  // Only the original explicit find/hidden regions are normalized; decoder/CSP checks stay strict.
-  assert.equal(sha256(markup), '16c94492e9875ae6bb35ac16bdd4eb7787faa025f60d292d94ec16fb8fe4550d');
+test('intentional bilingual additions preserve standalone CSP and runtime network isolation', () => {
   assert.match(html, /content="default-src 'none'; connect-src 'none'; script-src 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'unsafe-inline'; img-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none';"/);
   assert.doesNotMatch(html, /<script[^>]+src=["']https?:\/\//i);
+  assert.doesNotMatch(html, /<(?:link|script)[^>]+(?:href|src)=["'](?:components|https?:)/i);
+  for (const id of ['choose-file','find-query','find-count','data-head','data-body','export-name','session-retention','language-ja','language-en','help-toggle']) assert.match(html, new RegExp('id="' + id + '"'));
 });
 
 test('every shipped inline script parses without executing the embedded parser', () => {

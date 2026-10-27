@@ -31,6 +31,7 @@ function setup() {
       if (name === 'id') { this.id = value; elements.set(value, this); }
       if (name.startsWith('data-')) this.dataset[name.slice(5).replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = value;
     }
+    removeAttribute(name) { delete this.attrs[name]; }
     getAttribute(name) { return this.attrs[name] ?? null; }
     hasAttribute(name) { return Object.hasOwn(this.attrs, name); }
     matches(selector) {

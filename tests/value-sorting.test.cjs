@@ -21,7 +21,7 @@ function setup() {
   const elements = new Map(), reads = [], metadataReads = [], downloads = [], blobs = [], copied = [], timers = [];
   function element(id = '') {
     return { id, innerHTML: '', textContent: '', hidden: false, disabled: false, value: '', dataset: {}, style: {},
-      classList: { add() {}, remove() {} }, addEventListener() {}, setAttribute() {}, remove() {},
+      classList: { add() {}, remove() {} }, addEventListener() {}, setAttribute() {}, removeAttribute() {}, remove() {},
       click() { downloads.push(this.download); },
       querySelectorAll(selector) {
         this.headers = selector === 'th[data-column]' ? [...this.innerHTML.matchAll(/data-column="([^"]*)"/g)].map(m => ({ dataset: { column: m[1] } })) : [];
