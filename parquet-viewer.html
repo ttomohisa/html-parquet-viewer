@@ -1767,13 +1767,13 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             ready: ['Ready — supports {codecs}.', '準備完了 — 対応コーデック：{codecs}。'], reading: ['Reading rows {start}–{end} of {total}… Wait for processing to finish.', '全{total}行のうち{start}～{end}行を読み込み中… 処理完了までお待ちください。'], previewReady: ['Ready — previewing {rows} rows only.', '準備完了 — {rows}行のみプレビューしています。'], readingMetadata: ['Reading Parquet metadata… Wait for processing to finish.', 'Parquetのメタデータを読み込み中… 処理完了までお待ちください。'],
             errorHeader: ['This is not a Parquet file: missing PAR1 header.', 'Parquetファイルではありません。PAR1ヘッダーがありません。'], errorFooter: ['The file appears truncated or its Parquet footer is invalid.', 'ファイルが途中で切れているか、Parquetフッターが無効です。'], errorUnsupported: ['This file uses an encoding or compression method not supported by this viewer: {detail}.', 'このビューアーが対応していないエンコーディングまたは圧縮形式です：{detail}。'], errorPreview: ['Preview could not be rendered. Try a smaller page size.', 'プレビューを表示できませんでした。1ページの行数を減らしてお試しください。'], errorRead: ['Could not read this file: {detail}', 'ファイルを読み込めませんでした：{detail}']
         };
-        function tr(key, values = {}) { return (appCopy[key]?.[appLanguage === 'ja' ? 1 : 0] || key).replace(/\{(\w+)\}/g, (all, key) => Object.hasOwn(values, key) ? String(values[key]) : all) }
-        function translatedStatus(session) { return session.statusKey === 'error' ? friendlyError(session.statusValues.error, session.statusValues.stage) : session.statusKey ? tr(session.statusKey, {...session.statusValues, started:UI.text("downloadStarted", appLanguage)}) : session.statusText }
+        function appText(key, values = {}) { return (appCopy[key]?.[appLanguage === 'ja' ? 1 : 0] || key).replace(/\{(\w+)\}/g, (all, key) => Object.hasOwn(values, key) ? String(values[key]) : all) }
+        function translatedStatus(session) { return session.statusKey === 'error' ? friendlyError(session.statusValues.error, session.statusValues.stage) : session.statusKey ? appText(session.statusKey, {...session.statusValues, started:UI.text("downloadStarted", appLanguage)}) : session.statusText }
         function applyLanguage() {
             document.documentElement?.setAttribute('lang', appLanguage);
-            document.title = tr('appTitle'); D('document-description').setAttribute('content', tr('description'));
+            document.title = appText('appTitle'); D('document-description').setAttribute('content', appText('description'));
             for (let [attribute, target] of [['data-i18n', null], ['data-i18n-title', 'title'], ['data-i18n-aria', 'aria-label'], ['data-i18n-placeholder', 'placeholder']]) {
-                document.querySelectorAll('[' + attribute + ']').forEach(element => { let text = tr(element.getAttribute(attribute)); if (target) element.setAttribute(target, text); else element.textContent = text });
+                document.querySelectorAll('[' + attribute + ']').forEach(element => { let text = appText(element.getAttribute(attribute)); if (target) element.setAttribute(target, text); else element.textContent = text });
             }
             D('language-ja').setAttribute('aria-pressed', String(appLanguage === 'ja')); D('language-en').setAttribute('aria-pressed', String(appLanguage === 'en'));
             D('language-ja').setAttribute('aria-label', appLanguage === 'ja' ? '日本語に切り替え' : 'Switch to Japanese');
@@ -1789,8 +1789,8 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
         function renderExport() {
             let page = N.completedPage, available = exportable();
             D('export-name').value = N.exportName ?? exportBase(page); D('export-name').disabled = !available;
-            D('export-scope').textContent = tr('exportScope', { page: (page?.page ?? N.page) + 1, rows: page?.rows.length || 0 });
-            D('export-reason').textContent = tr(N.loading ? 'exportLoading' : available ? 'exportReady' : 'exportUnavailable');
+            D('export-scope').textContent = appText('exportScope', { page: (page?.page ?? N.page) + 1, rows: page?.rows.length || 0 });
+            D('export-reason').textContent = appText(N.loading ? 'exportLoading' : available ? 'exportReady' : 'exportUnavailable');
         }
 
         function emptySession(file = null, pageSize = 100) {
@@ -1806,7 +1806,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
         function renderSession() {
             ho();
             D("sort-note").hidden = true;
-            D("copy-csv").textContent = tr(N.copyingPage === N.completedPage && N.copyingPage ? "copying" : N.copiedPage === N.completedPage && N.copiedPage ? "copied" : "copyCsv");
+            D("copy-csv").textContent = appText(N.copyingPage === N.completedPage && N.copyingPage ? "copying" : N.copiedPage === N.completedPage && N.copiedPage ? "copied" : "copyCsv");
             D("copy-csv").classList.remove("copied");
             if (N.copiedPage && N.copiedPage === N.completedPage) D("copy-csv").classList.add("copied");
             if (N.metadata) {
@@ -1822,14 +1822,14 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                         sessionStatus(N, friendlyError(err, "preview"), "error", "error", {error: err, stage: "preview"});
                     }
                 }
-                D("page-label").textContent = tr("pageLabel", { page: N.page + 1, pages: Math.max(1, Math.ceil(N.rows / N.pageSize)) });
+                D("page-label").textContent = appText("pageLabel", { page: N.page + 1, pages: Math.max(1, Math.ceil(N.rows / N.pageSize)) });
                 D("row-jump").value = N.page + 1;
                 D("row-jump").max = Math.max(1, Math.ceil(N.rows / N.pageSize));
                 D("pager").hidden = false;
             }
             renderFindControls();
             busy(N.loading);
-            je(translatedStatus(N) || tr("ready", {codecs: Qr}), N.statusClass);
+            je(translatedStatus(N) || appText("ready", {codecs: Qr}), N.statusClass);
             renderExport();
         }
 		function go(e) { if (typeof e == "bigint") return e.toString(); if (e instanceof Uint8Array) return `Uint8Array(${e.byteLength}) ${Array.from(e.slice(0, 24)).map(t => t.toString(16).padStart(2, "0")).join("")}${e.byteLength > 24 ? "…" : ""}`; if (e instanceof Date) return e.toISOString(); if (e == null) return ""; if (typeof e == "object") try { return JSON.stringify(e, (t, n) => typeof n == "bigint" ? n.toString() : n) } catch { return String(e) } return String(e) }
@@ -1852,12 +1852,12 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function wo(e) { let t = new Set; for (let n of e.row_groups || []) for (let r of n.columns || []) t.add(r.meta_data?.codec || "UNCOMPRESSED"); return [...t].join(", ") || "UNCOMPRESSED" }
 		function shortType(t) { let s = String(t || "value").toLowerCase().replaceAll("_", " "); if (s.includes("timestamp")) return "time"; if (s.includes("decimal")) return "decimal"; if (s.includes("uint64")) return "uint64"; if (s.includes("uint32")) return "uint32"; if (s.includes("int64")) return "int64"; if (s.includes("int32")) return "int32"; if (s.includes("double")) return "float64"; if (s.includes("float")) return "float32"; if (s.includes("boolean")) return "bool"; if (s.includes("utf8") || s.includes("string") || s.includes("byte array")) return "text"; if (s.includes("date")) return "date"; if (s.includes("list")) return "list"; if (s.includes("map")) return "map"; return s.replace("fixed len ", "").slice(0, 14) }
 		function columnTypes() { let m = new Map; for (let f of Fr(N.schema)) { m.set(f.name, shortType(f.type)); m.set(f.name.split(".").at(-1), shortType(f.type)) } return m }
-		function mo() { let e = N.metadata, t = [[tr("file"), N.file.name], [tr("size"), po(N.file.size)], [tr("rows"), Number(e.num_rows).toLocaleString()], [tr("rowGroups"), (e.row_groups || []).length.toLocaleString()], [tr("format"), e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], [tr("codecs"), wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(r)}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; D("schema-section").hidden = !1; D("metadata-section").hidden = !1; D("preview-section").hidden = !1; D("page-size").value = String(N.pageSize); let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || `<tr><td colspan="3">${se(tr("noFields"))}</td></tr>`; let meta = [["created_by", e.created_by], ...(e.key_value_metadata || []).map(r => [r.key, r.value])].filter(([, v]) => v !== undefined && v !== null && v !== ""); D("metadata-body").innerHTML = meta.map(([k, v]) => `<tr><td>${se(k)}</td><td title="${se(v)}">${se(v)}</td></tr>`).join("") || `<tr><td colspan="2">${se(tr("noMetadata"))}</td></tr>` }
+		function mo() { let e = N.metadata, t = [[appText("file"), N.file.name], [appText("size"), po(N.file.size)], [appText("rows"), Number(e.num_rows).toLocaleString()], [appText("rowGroups"), (e.row_groups || []).length.toLocaleString()], [appText("format"), e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], [appText("codecs"), wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(r)}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; D("schema-section").hidden = !1; D("metadata-section").hidden = !1; D("preview-section").hidden = !1; D("page-size").value = String(N.pageSize); let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || `<tr><td colspan="3">${se(appText("noFields"))}</td></tr>`; let meta = [["created_by", e.created_by], ...(e.key_value_metadata || []).map(r => [r.key, r.value])].filter(([, v]) => v !== undefined && v !== null && v !== ""); D("metadata-body").innerHTML = meta.map(([k, v]) => `<tr><td>${se(k)}</td><td title="${se(v)}">${se(v)}</td></tr>`).join("") || `<tr><td colspan="2">${se(appText("noMetadata"))}</td></tr>` }
 		function renderTabs() {
             let focused = document.activeElement, ownedFocus = focused && D("tabs").contains(focused);
             let kind = ownedFocus ? (focused.dataset.close ? "close" : focused.dataset.tab ? "tab" : null) : null;
             let focusId = kind && focused.dataset[kind];
-            D("tabs").innerHTML = [...tabs].map(([id, t]) => `<div class="file-tab ${id === activeTab ? "active" : ""}" role="presentation"><button type="button" class="tab" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span></button><button type="button" class="tab-close" title="${se(tr("closeScope", {name:t.file.name}))}" data-close="${id}" aria-label="${se(tr("closeFile", {name:t.file.name}))}">×</button></div>`).join("");
+            D("tabs").innerHTML = [...tabs].map(([id, t]) => `<div class="file-tab ${id === activeTab ? "active" : ""}" role="presentation"><button type="button" class="tab" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span></button><button type="button" class="tab-close" title="${se(appText("closeScope", {name:t.file.name}))}" data-close="${id}" aria-label="${se(appText("closeFile", {name:t.file.name}))}">×</button></div>`).join("");
             if (kind) {
                 let target = [...D("tabs").querySelectorAll(`[data-${kind}]`)].find(button => button.dataset[kind] === focusId)
                     || [...D("tabs").querySelectorAll("[data-tab]")].find(button => button.dataset.tab === activeTab)
@@ -1866,7 +1866,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             }
         }
 		function cell(v) { return v === null || v === undefined ? '<span class="null-value">null</span>' : v === "" ? '<span class="empty-value"></span>' : se(v) }
-        function friendlyError(err, stage) { let m = String(err?.message || err || ""); let l = m.toLowerCase(); if (l.includes("missing par1") || l.includes("does not begin") || l.includes("invalid footer") && stage === "header") return tr('errorHeader'); if (l.includes("footer") || l.includes("truncated") || l.includes("metadata length") || l.includes("too short") || l.includes("end of input")) return tr('errorFooter'); if (l.includes("unsupported encoding") || l.includes("unsupported codec") || l.includes("unsupported compression") || l.includes("not supported")) return tr('errorUnsupported', {detail:m}); if (l.includes("memory") || l.includes("allocation") || l.includes("out of") || l.includes("maximum call stack")) return tr('errorPreview'); return stage === "preview" ? tr('errorPreview') : tr('errorRead', {detail:m}) }
+        function friendlyError(err, stage) { let m = String(err?.message || err || ""); let l = m.toLowerCase(); if (l.includes("missing par1") || l.includes("does not begin") || l.includes("invalid footer") && stage === "header") return appText('errorHeader'); if (l.includes("footer") || l.includes("truncated") || l.includes("metadata length") || l.includes("too short") || l.includes("end of input")) return appText('errorFooter'); if (l.includes("unsupported encoding") || l.includes("unsupported codec") || l.includes("unsupported compression") || l.includes("not supported")) return appText('errorUnsupported', {detail:m}); if (l.includes("memory") || l.includes("allocation") || l.includes("out of") || l.includes("maximum call stack")) return appText('errorPreview'); return stage === "preview" ? appText('errorPreview') : appText('errorRead', {detail:m}) }
 		async function yt(session = N, id = activeTab) {
             if (!ownsSession(id, session) || !session.metadata) return;
             let request = ++session.request, file = session.file, page = session.page, pageSize = session.pageSize;
@@ -1910,11 +1910,11 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             let available = findable(), query = N.findQuery || "", matches = available ? N.findRows || [] : [];
             D("find-query").value = query;
             D("find-query").disabled = !available;
-            D("find-reason").textContent = !available ? tr("findRead") : !query ? tr("findEnter") : !matches.length ? tr("noMatching") : "";
+            D("find-reason").textContent = !available ? appText("findRead") : !query ? appText("findEnter") : !matches.length ? appText("noMatching") : "";
             UI.setButtonState(D("find-prev"), matches.length ? "ready" : "unavailable");
             UI.setButtonState(D("find-next"), matches.length ? "ready" : "unavailable");
             UI.setButtonState(D("find-clear"), query ? "ready" : "unavailable");
-            D("find-count").textContent = available && query ? (matches.length ? tr("matching", {index:N.findIndex+1, count:matches.length}) : tr("noMatching")) : "";
+            D("find-count").textContent = available && query ? (matches.length ? appText("matching", {index:N.findIndex+1, count:matches.length}) : appText("noMatching")) : "";
         }
         function scrollToFindMatch() {
             if (findable() && N.findRows?.length) D("data-body").querySelector('[data-find-current="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -1947,10 +1947,10 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             let matches = new Set(N.findRows), current = N.findRows[N.findIndex];
             D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => {
                 let sorted = N.sortColumn === c, order = sorted ? (N.sortDirection === 1 ? "ascending" : "descending") : "none";
-                let action = tr(!sorted ? "sortAscending" : N.sortDirection === 1 ? "sortDescending" : "resetSort");
-                return `<th data-column="${se(c)}" aria-sort="${order}" title="${se(tr("sortTitle"))}"><button type="button" class="column-sort" data-sort="${se(c)}" aria-label="${se(c)}: ${action}">${se(c)}${sorted ? `<span class="sort-indicator" aria-hidden="true">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || tr("value"))}</span></button></th>`;
+                let action = appText(!sorted ? "sortAscending" : N.sortDirection === 1 ? "sortDescending" : "resetSort");
+                return `<th data-column="${se(c)}" aria-sort="${order}" title="${se(appText("sortTitle"))}"><button type="button" class="column-sort" data-sort="${se(c)}" aria-label="${se(c)}: ${action}">${se(c)}${sorted ? `<span class="sort-indicator" aria-hidden="true">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || appText("value"))}</span></button></th>`;
             }).join("") + "</tr>";
-            D("data-body").innerHTML = rows.map((row, i) => `<tr${matches.has(i) ? ` class="find-match${i === current ? " find-current" : ""}"` : ""} data-find-row="${i}"${i === current ? ' data-find-current="true" aria-current="true"' : ""}><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || `<tr><td>${se(tr("noRows"))}</td></tr>`;
+            D("data-body").innerHTML = rows.map((row, i) => `<tr${matches.has(i) ? ` class="find-match${i === current ? " find-current" : ""}"` : ""} data-find-row="${i}"${i === current ? ' data-find-current="true" aria-current="true"' : ""}><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || `<tr><td>${se(appText("noRows"))}</td></tr>`;
             D("sort-note").hidden = !N.sortColumn;
             renderFindControls();
             D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => {
@@ -2061,25 +2061,37 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             if (!exportable() || N.copyingPage === N.completedPage) return;
             let session = N, page = N.completedPage, id = activeTab, request = ++copyRequest;
             session.copyingPage = page; session.copiedPage = null; busy(N.loading);
-            const current = () => request === copyRequest && activeSession(id, session) && N.completedPage === page;
+            const ownsActivePage = () => activeSession(id, session) && N.completedPage === page;
+            const mayNotify = () => request === copyRequest && ownsActivePage();
             let button = D("copy-csv");
-            button.textContent = tr("copying");
+            button.textContent = appText("copying");
             button.classList.remove("copied");
             try {
                 await copyText(csv());
-                if (!current()) return;
-                session.copiedPage = page; button.textContent = tr("copied");
+                if (!mayNotify()) return;
+                session.copiedPage = page; button.textContent = appText("copied");
                 button.classList.add("copied");
                 setTimeout(() => {
-                    if (!current()) return;
-                    session.copiedPage = null; button.textContent = tr("copyCsv");
+                    if (!mayNotify()) return;
+                    session.copiedPage = null; button.textContent = appText("copyCsv");
                     button.classList.remove("copied");
                 }, 1500);
             } catch (err) {
-                if (!current()) return;
+                if (!mayNotify()) return;
                 console.error(err);
-                button.textContent = tr("copyCsv"); sessionStatus(session, "", "error", "copyError"); je(translatedStatus(session), "error");
-            } finally { if (session.copyingPage === page) session.copyingPage = null; if (current()) busy(N.loading); }
+                button.textContent = appText("copyCsv"); sessionStatus(session, "", "error", "copyError"); je(translatedStatus(session), "error");
+            } finally {
+                // Busy ownership is per page. A newer tab's notification request
+                // must not keep this page disabled when its own copy has settled.
+                if (session.copyingPage === page) {
+                    session.copyingPage = null;
+                    if (ownsActivePage()) {
+                        busy(N.loading);
+                        button.textContent = appText(session.copiedPage === page ? "copied" : "copyCsv");
+                        if (session.copiedPage !== page) button.classList.remove("copied");
+                    }
+                }
+            }
         };
         D("export-name").oninput = e => { N.exportName = e.target.value };
         D("language-ja").onclick = () => chooseAppLanguage("ja"); D("language-en").onclick = () => chooseAppLanguage("en");

@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const { test } = require('node:test');
+const { spawnSync } = require('node:child_process');
 
 const html = fs.readFileSync(process.env.PARQUET_HTML || path.join(__dirname, '..', 'parquet-viewer.html'), 'utf8').replace(/\r\n/g, '\n');
 const start = html.indexOf('var D = e => document.getElementById(e)');
@@ -30,4 +31,14 @@ test('every shipped inline script parses without executing the embedded parser',
   const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)];
   assert.equal(scripts.length, 1);
   for (const [, source] of scripts) assert.doesNotThrow(() => new vm.Script(source));
+});
+
+
+test('every shipped inline module passes native module syntax checks', () => {
+  const modules = [...html.matchAll(/<script\b[^>]*type=["']module["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  assert.equal(modules.length, 1);
+  for (const [, source] of modules) {
+    const checked = spawnSync(process.execPath, ['--input-type=module', '--check'], {input:source, encoding:'utf8'});
+    assert.equal(checked.status, 0, checked.stderr);
+  }
 });

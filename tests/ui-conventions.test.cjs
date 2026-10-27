@@ -178,3 +178,37 @@ nodeTest('bundled Snappy sample retains baseline CSV bytes across pages, sorting
   await h.ctx.activate(oldId);assert.equal(h.ctx.N.completedPage,before);
   assert.equal(hash(),'43ab2428d72c3f945d36cdff366aced2bdcce60794eb7049c9e1c6befa14cc2f');
 });
+
+
+test('the embedded ZSTD decoder remains callable after app initialization and language changes', () => {
+  const h=setup({realParser:true});
+  // Fixed frame independently encoded by Node zlib Zstandard, not by the embedded decoder.
+  const frame=new Uint8Array([40,181,47,253,96,128,0,253,0,0,192,80,97,114,113,117,101,116,32,90,83,84,68,32,114,101,103,114,101,115,115,105,111,110,32,1,0,148,173,58,199]);
+  assert.equal(Buffer.from(h.ctx.hn.ZSTD(frame)).toString('utf8'),'Parquet ZSTD regression '.repeat(16));
+  h.ctx.chooseAppLanguage('ja');
+  assert.equal(Buffer.from(h.ctx.hn.ZSTD(frame)).toString('utf8'),'Parquet ZSTD regression '.repeat(16));
+});
+
+test('returning to an older pending copy reconciles native busy state without stale feedback', async () => {
+  for (const failA of [false,true]) for (const failB of [false,true]) for (const bFirst of [false,true]) {
+    const h=setup();h.seed('a','orchard');h.seed('b','meadow');
+    await loaded(h,'a',[{name:'pear'}]);await loaded(h,'b',[{name:'clover'}]);await h.ctx.activate('a');
+    const page=h.ctx.N.completedPage, a=deferred(), b=deferred();let calls=0;
+    h.ctx.navigator.clipboard.writeText=()=>++calls===1?a.promise:b.promise;
+    const copyingA=h.D('copy-csv').onclick();
+    await h.ctx.activate('b');const copyingB=h.D('copy-csv').onclick();await h.ctx.activate('a');
+    const status=h.D('status').textContent, kind=h.D('status').className;
+    assert.equal(h.D('copy-csv').disabled,true);assert.equal(h.D('copy-csv').textContent,'Copying CSV…');
+    const settleB=async()=>{if(failB)b.reject(Error('clipboard B rejected'));else b.resolve();await copyingB;};
+    if(bFirst) {await settleB();assert.equal(h.D('copy-csv').disabled,true);assert.equal(h.D('copy-csv').textContent,'Copying CSV…');}
+    if(failA)a.reject(Error('clipboard A rejected'));else a.resolve();await copyingA;
+    assert.equal(h.ctx.N.completedPage,page);assert.equal(h.D('copy-csv').disabled,false);
+    assert.equal(h.D('copy-csv')['data-bk-state'],'ready');assert.equal(h.D('copy-csv').textContent,'Copy CSV');
+    assert.equal(h.D('status').textContent,status);assert.equal(h.D('status').className,kind);
+    // A is actionable again while B can still be pending; B's completion must
+    // not remove the new A feedback or rewrite the current page's status.
+    h.ctx.navigator.clipboard.writeText=async()=>{calls++;};await h.D('copy-csv').onclick();
+    assert.equal(calls,3);assert.equal(h.D('copy-csv').textContent,'Copied');
+    const current=h.snapshot();if(!bFirst)await settleB();assert.equal(h.snapshot(),current);
+  }
+});
