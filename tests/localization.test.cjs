@@ -23,7 +23,7 @@ function localeHarness(browserLanguage = 'ja-JP', savedLanguage = null) {
     querySelectorAll(selector) { return selector === '[data-i18n]' ? [text] : []; }
   };
   const context = vm.createContext({
-    navigator: { language: browserLanguage }, document, D: () => language,
+    navigator: { language: browserLanguage }, document, D: () => language, hn: {},
     localStorage: { getItem: () => savedLanguage, setItem: (key, value) => saved.push({ key, value }) }
   });
   vm.runInContext(localeCode, context);
