@@ -358,10 +358,9 @@
 		}
 
 		.header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-		.locale-picker { display: flex; align-items: center; gap: 8px; flex: none; }
-		.locale-picker label { color: var(--muted); font-size: 12px; }
-		.locale-picker select { min-height: 38px; }
-		@media(max-width:600px) { .header-top { align-items: flex-start; } .locale-picker { margin-left: auto; } }
+		.header-top .title { min-width: 0; flex: 1 1 auto; }
+		.lang-toggle { margin-left: auto; flex: none; padding: 7px 3px; min-width: 32px; border: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 750; cursor: pointer; }
+		.lang-toggle:hover { color: var(--text); }
 
 		#copy-csv.copied {
 			border-color: var(--ok);
@@ -546,7 +545,7 @@
 </svg>
 
 				<h1>HTML Parquet Viewer</h1>
-			</div><div class="locale-picker"><label for="language" data-i18n="Language">Language</label><select id="language" aria-label="Language"><option value="en">English</option><option value="ja">日本語</option></select></div></div>
+			</div><button id="language" class="lang-toggle" type="button" aria-label="Switch to Japanese" title="Switch to Japanese">JA</button></div>
 
 			<p data-i18n="A self-contained, offline Parquet file viewer. Your files never leave this browser.">A self-contained, offline Parquet file viewer. Your files never leave this browser.</p>
 		</header>
@@ -1665,7 +1664,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             return value;
         }
         function renderLocale() {
-            D("language").value = lang;
+            D("language").textContent = lang === "ja" ? "EN" : "JA";
             document.documentElement?.setAttribute?.("lang", lang);
             document.title = lang === "ja" ? "Parquet ビューアー | HTML Parquet Viewer" : "HTML Parquet Viewer";
             document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = i18n(el.getAttribute("data-i18n")); });
@@ -1674,7 +1673,9 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                     el.setAttribute(attr, i18n(el.getAttribute("data-i18n-" + attr)));
                 });
             }
-            D("language").setAttribute("aria-label", i18n("Language"));
+            const targetLabel = lang === "ja" ? "英語に切り替え" : "Switch to Japanese";
+            D("language").setAttribute("aria-label", targetLabel);
+            D("language").setAttribute("title", targetLabel);
         }
         function emptySession(file = null, pageSize = 100) {
             return { file, metadata: null, schema: null, page: 0, pageSize, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1, request: 0, loading: false, completedPage: null, findQuery: "", findRows: [], findIndex: 0, statusText: "", statusClass: "ok" };
@@ -1947,7 +1948,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             }
         };
         document.querySelectorAll(".section-heading").forEach(b => b.onclick = () => { let content = D(b.getAttribute("aria-controls")), shown = !content.hidden; content.hidden = shown; b.setAttribute("aria-expanded", String(!shown)) });
-        D("language").onchange = e => { lang = e.target.value === "ja" ? "ja" : "en"; try { localStorage.setItem("parquet-viewer-language", lang) } catch {} renderLocale(); renderTabs(); renderSession(); };
+        D("language").onclick = () => { lang = lang === "ja" ? "en" : "ja"; try { localStorage.setItem("parquet-viewer-language", lang) } catch {} renderLocale(); renderTabs(); renderSession(); };
         renderLocale(); renderSession();
 	</script>
 
