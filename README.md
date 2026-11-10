@@ -25,6 +25,7 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 
 ## Features
 
+- Switch between **Japanese and English** without closing a file or resetting the current page; the viewer starts in the saved language, or follows the browser language (Japanese browsers use Japanese, others use English)
 - Open one or many local Parquet files from the picker or with drag and drop
 - Work with several files at once in closable tabs
 - Read Parquet v1 and v2 files
@@ -45,7 +46,8 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 
 1. Download [`parquet-viewer.html`](./parquet-viewer.html) from this repository.
 2. Open it in a current Chromium-based browser, Firefox, or Safari.
-3. Choose one or more `.parquet` files, or drag them into the drop area.
+3. Use the **Language / 言語** selector in the header to choose English or 日本語.
+4. Choose one or more `.parquet` files, or drag them into the drop area.
 
 There is no upload. Your selected files remain local to your browser session.
 
@@ -101,7 +103,7 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ### Catalog metadata
 
-`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The default UI is English. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
+`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI supports Japanese and English, choosing Japanese for Japanese-language browsers and English otherwise unless a language was previously selected. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
 
 ### State regression checks
 
