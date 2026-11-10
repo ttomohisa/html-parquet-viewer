@@ -476,3 +476,11 @@ test('header-only PAR1 input reports a truncated file before calling the decoder
   h.D('language').onclick();
   assert.match(h.D('status').textContent, /ファイルが途中で切れている/);
 });
+
+test('schema type badges distinguish raw Parquet binary bytes from UTF-8 strings', () => {
+  const h = setup();
+  assert.equal(h.run('shortType("BYTE_ARRAY")'), 'binary');
+  assert.equal(h.run('shortType("FIXED_LEN_BYTE_ARRAY")'), 'binary');
+  assert.equal(h.run('shortType("UTF8")'), 'text');
+  assert.equal(h.run('shortType("STRING")'), 'text');
+});
