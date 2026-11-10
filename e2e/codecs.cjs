@@ -15,10 +15,18 @@ const context = vm.createContext({
 });
 vm.runInContext(html.slice(begin, end) + '\nglobalThis.decoder = { Oe, Jt, hn };', context);
 const { Oe, Jt, hn } = context.decoder;
-const asAsyncFile = bytes => ({
-  byteLength: bytes.length,
-  slice: async (start, end) => Uint8Array.from(bytes.subarray(start, end)).buffer
-});
+const asAsyncFile = bytes => {
+  // The decoder's strict instanceof ArrayBuffer check requires a buffer
+  // created in the same JS realm as the decoder (as in a real browser).
+  context.inputBytes = bytes;
+  return vm.runInContext(`(() => {
+    const source = inputBytes;
+    return {
+      byteLength: source.length,
+      async slice(start, end) { return Uint8Array.from(source.subarray(start, end)).buffer; }
+    };
+  })()`, context);
+};
 
 const codecs = ['none', 'snappy', 'gzip', 'brotli', 'zstd', 'lz4'];
 for (const codec of codecs) {
