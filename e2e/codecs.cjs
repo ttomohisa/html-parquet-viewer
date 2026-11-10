@@ -9,11 +9,15 @@ const html = fs.readFileSync(path.join(root, 'parquet-viewer.html'), 'utf8');
 const begin = html.indexOf('<script type="module">') + '<script type="module">'.length;
 const end = html.indexOf('var D = e => document.getElementById(e)', begin);
 assert.ok(begin > 0 && end > begin);
+const fixStart = html.indexOf('function decompressLz4Raw(');
+const fixEnd = html.indexOf('function emptySession(', fixStart);
+assert.ok(fixStart > end && fixEnd > fixStart, 'LZ4_RAW compatibility override must be shipped in the app');
+
 const context = vm.createContext({
   TextDecoder, TextEncoder, WebAssembly,
   atob: input => Buffer.from(input, 'base64').toString('binary')
 });
-vm.runInContext(html.slice(begin, end) + '\nglobalThis.decoder = { Oe, Jt, hn };', context);
+vm.runInContext(html.slice(begin, end) + '\n' + html.slice(fixStart, fixEnd) + '\nglobalThis.decoder = { Oe, Jt, hn };', context);
 const { Oe, Jt, hn } = context.decoder;
 const asAsyncFile = bytes => {
   // The decoder's strict instanceof ArrayBuffer check requires a buffer
@@ -39,18 +43,7 @@ for (const codec of codecs) {
     assert.ok(metadata.row_groups.some(group => group.columns.some(col => col.meta_data?.codec === codec.toUpperCase() || codec === 'none' && col.meta_data?.codec === 'UNCOMPRESSED' || codec === 'lz4' && col.meta_data?.codec === 'LZ4_RAW')));
 
     for (const [start, end] of [[0, 1], [16, 18], [33, 77], [120, 123]]) {
-      const compressors = codec !== 'lz4' ? hn : {
-        ...hn,
-        LZ4_RAW: (bytes, expected) => {
-          console.log('LZ4_RAW sample', JSON.stringify({
-            compressedLength: bytes.length, expected,
-            first32: Array.from(bytes.slice(0, 32)),
-            last16: Array.from(bytes.slice(-16))
-          }));
-          return hn.LZ4_RAW(bytes, expected);
-        }
-      };
-      const rows = await Jt({ file, compressors, rowStart: start, rowEnd: end, utf8: false });
+      const rows = await Jt({ file, compressors: hn, rowStart: start, rowEnd: end, utf8: false });
       assert.equal(rows.length, end - start, codec + ': row count in [' + start + ',' + end + ')');
       for (let i = 0; i < rows.length; i++) {
         const index = start + i, row = rows[i];
