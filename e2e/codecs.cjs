@@ -39,7 +39,18 @@ for (const codec of codecs) {
     assert.ok(metadata.row_groups.some(group => group.columns.some(col => col.meta_data?.codec === codec.toUpperCase() || codec === 'none' && col.meta_data?.codec === 'UNCOMPRESSED' || codec === 'lz4' && col.meta_data?.codec === 'LZ4_RAW')));
 
     for (const [start, end] of [[0, 1], [16, 18], [33, 77], [120, 123]]) {
-      const rows = await Jt({ file, compressors: hn, rowStart: start, rowEnd: end, utf8: false });
+      const compressors = codec !== 'lz4' ? hn : {
+        ...hn,
+        LZ4_RAW: (bytes, expected) => {
+          console.log('LZ4_RAW sample', JSON.stringify({
+            compressedLength: bytes.length, expected,
+            first32: Array.from(bytes.slice(0, 32)),
+            last16: Array.from(bytes.slice(-16))
+          }));
+          return hn.LZ4_RAW(bytes, expected);
+        }
+      };
+      const rows = await Jt({ file, compressors, rowStart: start, rowEnd: end, utf8: false });
       assert.equal(rows.length, end - start, codec + ': row count in [' + start + ',' + end + ')');
       for (let i = 0; i < rows.length; i++) {
         const index = start + i, row = rows[i];
