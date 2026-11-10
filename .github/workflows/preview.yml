@@ -53,6 +53,9 @@ jobs:
       - name: Generate synthetic codec fixtures
         run: python e2e/generate_fixtures.py
 
+      - name: Run decoder/codec matrix and corruption checks
+        run: node --test e2e/codecs.cjs
+
       - name: Run real Edge browser E2E
         run: node --test e2e/browser.cjs
 
@@ -63,9 +66,6 @@ jobs:
           name: parquet-browser-e2e-${{ github.run_id }}
           path: test-results/*.png
           if-no-files-found: ignore
-
-      - name: Run decoder/codec matrix and corruption checks
-        run: node --test e2e/codecs.cjs
 
       - name: Validate and stage static app
         shell: pwsh
