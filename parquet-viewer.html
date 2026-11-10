@@ -1761,7 +1761,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             sessionStatus(session, `Reading rows ${start.toLocaleString()}–${Math.max(start, end - 1).toLocaleString()} of ${session.rows.toLocaleString()}…`, "loading");
             if (activeSession(id, session)) renderSession();
             try {
-                let rows = await Jt({ file, compressors: hn, rowStart: start, rowEnd: end });
+                let rows = await Jt({ file, compressors: hn, rowStart: start, rowEnd: end, utf8: false });
                 if (!current()) return;
                 let columns = [...new Set(rows.flatMap(row => Object.keys(row)))];
                 // Data and its export identity become available together, only on success.
