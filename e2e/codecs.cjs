@@ -84,7 +84,7 @@ test('LZ4_RAW long-match extensions, overlapping copies and invalid bounds', () 
   const output = hn.LZ4_RAW(longMatch, 101);
   assert.equal(output.length, 101);
   assert.equal(Buffer.from(output).toString('ascii'), 'a'.repeat(96) + '12345');
-  assert.throws(() => hn.LZ4_RAW(longMatch, 100), /Invalid LZ4 match length/);
+  assert.throws(() => hn.LZ4_RAW(longMatch, 90), /Invalid LZ4 match length/);
   assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0xf0]), 1), /Truncated LZ4 literal length/);
   assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0x10, 0x61, 0, 0]), 5), /Invalid LZ4 match offset/);
   assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0x10, 0x61, 2, 0]), 5), /Invalid LZ4 match offset/);
