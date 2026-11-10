@@ -14,7 +14,7 @@ const localeCode = html.slice(begin, end);
 function localeHarness(browserLanguage = 'ja-JP', savedLanguage = null) {
   const attrs = { 'data-i18n': 'Download CSV' };
   const text = { textContent: '', getAttribute: key => attrs[key], setAttribute: (key, value) => { attrs[key] = value; } };
-  const language = { value: '', setAttribute: (key, value) => { language[key] = value; } };
+  const language = { textContent: '', setAttribute: (key, value) => { language[key] = value; } };
   const docLang = {};
   const saved = [];
   const document = {
@@ -35,7 +35,8 @@ test('Japanese browser preference renders translated UI without changing product
   const h = localeHarness();
   h.run('renderLocale()');
   assert.equal(h.text.textContent, 'CSVを保存');
-  assert.equal(h.language.value, 'ja');
+  assert.equal(h.language.textContent, 'EN');
+  assert.equal(h.language['aria-label'], '英語に切り替え');
   assert.equal(h.docLang.lang, 'ja');
   assert.match(h.document.title, /Parquet/);
   assert.equal(h.run('localizedStatus("Reading Parquet metadata…")'), 'Parquetファイルの情報を読み込んでいます…');
@@ -48,21 +49,25 @@ test('Japanese browser preference renders translated UI without changing product
 test('saved English choice wins over Japanese browser, and switching updates rendered strings', () => {
   const h = localeHarness('ja-JP', 'en');
   h.run('renderLocale()');
-  assert.equal(h.language.value, 'en');
+  assert.equal(h.language.textContent, 'JA');
+  assert.equal(h.language['aria-label'], 'Switch to Japanese');
   assert.equal(h.text.textContent, 'Download CSV');
   assert.equal(h.run('localizedStatus("Ready — previewing 20 rows only.")'), 'Ready — previewing 20 rows only.');
   h.run('lang = "ja"; renderLocale()');
+  assert.equal(h.language.textContent, 'EN');
   assert.equal(h.text.textContent, 'CSVを保存');
   h.run('lang = "en"; renderLocale()');
+  assert.equal(h.language.textContent, 'JA');
   assert.equal(h.text.textContent, 'Download CSV');
 });
 
 test('shipped document contains both language choices and localized controls', () => {
   const config = JSON.parse(fs.readFileSync(path.join(root, 'app.config.json'), 'utf8'));
   assert.deepEqual(config.languages, ['ja', 'en']);
-  assert.match(html, /id="language" aria-label="Language"/);
-  assert.match(html, /value="ja">日本語/);
+  assert.match(html, /id="language" class="lang-toggle" type="button"/);
+  assert.match(html, /class="lang-toggle"[^>]*>JA<\/button>/);
+  assert.doesNotMatch(html, /<select id="language"/);
   assert.match(html, /data-i18n="Find values on this page"/);
   assert.match(html, /data-i18n-title="Download the current preview page as CSV"/);
-  assert.match(html, /D\("language"\)\.onchange/);
+  assert.match(html, /D\("language"\)\.onclick/);
 });
