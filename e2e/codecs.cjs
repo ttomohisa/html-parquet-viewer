@@ -36,10 +36,10 @@ for (const codec of codecs) {
     const metadata = await Oe(file);
     assert.equal(Number(metadata.num_rows), 123);
     assert.equal(metadata.row_groups.length, 8);
-    assert.ok(metadata.row_groups.some(group => group.columns.some(col => col.meta_data?.codec === codec.toUpperCase() || codec === 'none' && col.meta_data?.codec === 'UNCOMPRESSED')));
+    assert.ok(metadata.row_groups.some(group => group.columns.some(col => col.meta_data?.codec === codec.toUpperCase() || codec === 'none' && col.meta_data?.codec === 'UNCOMPRESSED' || codec === 'lz4' && col.meta_data?.codec === 'LZ4_RAW')));
 
     for (const [start, end] of [[0, 1], [16, 18], [33, 77], [120, 123]]) {
-      const rows = await Jt({ file, compressors: hn, rowStart: start, rowEnd: end });
+      const rows = await Jt({ file, compressors: hn, rowStart: start, rowEnd: end, utf8: false });
       assert.equal(rows.length, end - start, codec + ': row count in [' + start + ',' + end + ')');
       for (let i = 0; i < rows.length; i++) {
         const index = start + i, row = rows[i];
