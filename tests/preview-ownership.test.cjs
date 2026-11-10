@@ -464,3 +464,15 @@ test('language toggle does not finish pending reads or enable stale CSV exports'
   assert.equal(h.D('status').textContent, 'Ready — previewing 1 rows only.');
   assert.equal(h.ctx.csv(), '"value"\r\n"ready"');
 });
+
+test('header-only PAR1 input reports a truncated file before calling the decoder', async () => {
+  const h = setup();
+  const short = new Blob(['PAR1']);
+  await h.ctx.openOne({ name: 'header-only.parquet', size: short.size, slice: (start, end) => short.slice(start, end) });
+  assert.equal(h.metadataReads.length, 0);
+  assert.equal(h.D('status').className, 'error');
+  assert.match(h.D('status').textContent, /truncated|footer/i);
+  assertExportsDisabled(h);
+  h.D('language').onclick();
+  assert.match(h.D('status').textContent, /ファイルが途中で切れている/);
+});
