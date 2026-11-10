@@ -1614,6 +1614,68 @@ YEruPHv9jvnYZxalzUMH9iWulTvIaLTXEa5ZX8xVa61fFraX9QCIAKg5bh8rVRiy7m8o4pJl5O0ogZ8d
 vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function Er() { if (!wt) { wt = new Uint8Array(122784); let e = atob(qi), t = new Uint8Array(e.length); for (let n = 0; n < e.length; n++)t[n] = e.charCodeAt(n); Qe(t, wt) } return wt } var v = 0, Br = 1, Hi = 2, Gi = 3, Vi = 4, Zi = 5, zi = 6, Ki = 7, Ji = 8, Cr = 9, k = 10, q = 11, An = 12, ji = 13, Xi = 14, _i = 15, $i = 16, eo = 17, to = 18, no = 20; function m(e, t, n) { this.prefix = new Uint8Array(e.length), this.transform = t, this.suffix = new Uint8Array(n.length); for (let r = 0; r < e.length; r++)this.prefix[r] = e.charCodeAt(r); for (let r = 0; r < n.length; r++)this.suffix[r] = n.charCodeAt(r) } var mt = [new m("", v, ""), new m("", v, " "), new m(" ", v, " "), new m("", An, ""), new m("", k, " "), new m("", v, " the "), new m(" ", v, ""), new m("s ", v, " "), new m("", v, " of "), new m("", k, ""), new m("", v, " and "), new m("", ji, ""), new m("", Br, ""), new m(", ", v, " "), new m("", v, ", "), new m(" ", k, " "), new m("", v, " in "), new m("", v, " to "), new m("e ", v, " "), new m("", v, '"'), new m("", v, "."), new m("", v, '">'), new m("", v, `
 `), new m("", Gi, ""), new m("", v, "]"), new m("", v, " for "), new m("", Xi, ""), new m("", Hi, ""), new m("", v, " a "), new m("", v, " that "), new m(" ", k, ""), new m("", v, ". "), new m(".", v, ""), new m(" ", v, ", "), new m("", _i, ""), new m("", v, " with "), new m("", v, "'"), new m("", v, " from "), new m("", v, " by "), new m("", $i, ""), new m("", eo, ""), new m(" the ", v, ""), new m("", Vi, ""), new m("", v, ". The "), new m("", q, ""), new m("", v, " on "), new m("", v, " as "), new m("", v, " is "), new m("", Ki, ""), new m("", Br, "ing "), new m("", v, `
 	`), new m("", v, ":"), new m(" ", v, ". "), new m("", v, "ed "), new m("", no, ""), new m("", to, ""), new m("", zi, ""), new m("", v, "("), new m("", k, ", "), new m("", Ji, ""), new m("", v, " at "), new m("", v, "ly "), new m(" the ", v, " of "), new m("", Zi, ""), new m("", Cr, ""), new m(" ", k, ", "), new m("", k, '"'), new m(".", v, "("), new m("", q, " "), new m("", k, '">'), new m("", v, '="'), new m(" ", v, "."), new m(".com/", v, ""), new m(" the ", v, " of the "), new m("", k, "'"), new m("", v, ". This "), new m("", v, ","), new m(".", v, " "), new m("", k, "("), new m("", k, "."), new m("", v, " not "), new m(" ", v, '="'), new m("", v, "er "), new m(" ", q, " "), new m("", v, "al "), new m(" ", q, ""), new m("", v, "='"), new m("", q, '"'), new m("", k, ". "), new m(" ", v, "("), new m("", v, "ful "), new m(" ", k, ". "), new m("", v, "ive "), new m("", v, "less "), new m("", q, "'"), new m("", v, "est "), new m(" ", k, "."), new m("", q, '">'), new m(" ", v, "='"), new m("", k, ","), new m("", v, "ize "), new m("", q, "."), new m("\xC2\xA0", v, ""), new m(" ", v, ","), new m("", k, '="'), new m("", q, '="'), new m("", v, "ous "), new m("", q, ", "), new m("", k, "='"), new m(" ", k, ","), new m(" ", q, '="'), new m(" ", q, ", "), new m("", q, ","), new m("", q, "("), new m("", q, ". "), new m(" ", q, "."), new m("", q, "='"), new m(" ", q, ". "), new m(" ", k, '="'), new m(" ", q, "='"), new m(" ", k, "='")], br = mt.length; function vr(e, t) { return e[t] < 192 ? (e[t] >= 97 && e[t] <= 122 && (e[t] ^= 32), 1) : e[t] < 224 ? (e[t + 1] ^= 32, 2) : (e[t + 2] ^= 5, 3) } function xr(e, t, n, r, i) { let o = Er(), { prefix: s } = mt[i], { suffix: f } = mt[i], l = mt[i].transform, A = l < An ? 0 : l - (An - 1), c = t; A > r && (A = r); let a = 0; for (; a < s.length;)e[t++] = s[a++]; n += A, r -= A, l <= Cr && (r -= l); for (let p = 0; p < r; p++)e[t++] = o[n + p]; let u = t - r; if (l === k) vr(e, u); else if (l === q) for (; r > 0;) { let p = vr(e, u); u += p, r -= p } let h = 0; for (; h < f.length;)e[t++] = f[h++]; return t - c } var ro = 256, io = 704, oo = 26, Lr = 6, Sr = 2, cn = 16, so = new Uint8Array([3, 2, 1, 0, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2]), fo = new Int8Array([0, 0, 0, 0, -1, 1, -2, 2, -3, 3, -1, 1, -2, 2, -3, 3]), ao = new Uint32Array([0, 0, 0, 0, 0, 4096, 9216, 21504, 35840, 44032, 53248, 63488, 74752, 87040, 93696, 100864, 104704, 106752, 108928, 113536, 115968, 118528, 119872, 121280, 122016]), lo = new Uint8Array([0, 0, 0, 0, 10, 10, 11, 11, 10, 10, 10, 10, 10, 9, 9, 8, 7, 7, 8, 7, 7, 6, 6, 5, 5]), Ao = 4, Ur = 24; function un(e, t) { let n = new Uint8Array(t), r = new fn(e), i = new an(n); return co(r, i), n } function co(e, t) { let n = 0, r = 0, i = 0, o = 0, s = [16, 15, 11, 4], f = 0, l = 0, A = 0, c = [new ce(0, 0), new ce(0, 0), new ce(0, 0)], a = 128 + G.READ_SIZE, u = new G(e); i = yr(u); let h = (1 << i) - 16, p = 1 << i, w = p - 1, d = new Uint8Array(p + a + Ur), g = p, y = [], I = []; for (let E = 0; E < 3 * 1080; E++)y[E] = new T(0, 0), I[E] = new T(0, 0); for (; !r;) { let E = 0, C = [1 << 28, 1 << 28, 1 << 28], B = [0], x = [1, 1, 1], S = [0, 1, 0, 1, 0, 1], F = [0], Q = 0; for (let b = 0; b < 3; b++)c[b].codes = [], c[b].htrees = new Uint32Array; u.readMoreInput(); let O = wr(u); if (E = O.meta_block_length, n + E > t.buffer.length) { let b = new Uint8Array(n + E); b.set(t.buffer), t.buffer = b } if (r = O.input_end, O.is_metadata) { for (Ir(u); E > 0; --E)u.readMoreInput(), u.readBits(8); continue } if (E === 0) continue; if (O.is_uncompressed) { u.bit_pos_ = u.bit_pos_ + 7 & -8, mr(t, E, n, d, w, u), n += E; continue } for (let b = 0; b < 3; b++)x[b] = ht(u) + 1, x[b] >= 2 && (Se(x[b] + 2, y, b * 1080, u), Se(oo, I, b * 1080, u), C[b] = Ke(I, b * 1080, u), F[b] = 1); u.readMoreInput(); let R = u.readBits(2), P = cn + (u.readBits(4) << R), U = (1 << R) - 1, L = P + (48 << R), M = new Uint8Array(x[0]); for (let b = 0; b < x[0]; b++)u.readMoreInput(), M[b] = u.readBits(2) << 1; let [he, we] = sn(x[0] << Lr, u), [me, Fe] = sn(x[2] << Sr, u); c[0] = new ce(ro, he), c[1] = new ce(io, x[1]), c[2] = new ce(L, me); for (let b = 0; b < 3; ++b)c[b].decode(u); let Re = 0, ye = 0, fe = M[B[0]], Te = Je[fe], Ne = Je[fe + 1], De = c[1].htrees[0]; for (; E > 0;) { let b; u.readMoreInput(), C[1] === 0 && (pt(x[1], y, 1, B, S, F, u), C[1] = Ke(I, 1080, u), De = c[1].htrees[B[1]]), C[1]--; let X = oe(c[1].codes, De, u), _ = X >> 6; _ >= 2 ? (_ -= 2, b = -1) : b = 0; let Ie = Ar[_] + (X >> 3 & 7), ae = ar[Ie], le = ae.offset + u.readBits(ae.nbits), It = cr[_] + (X & 7), wn = lr[It], Z = wn.offset + u.readBits(wn.nbits); l = d[n - 1 & w], A = d[n - 2 & w]; for (let z = 0; z < le; z++) { u.readMoreInput(), C[0] === 0 && (pt(x[0], y, 0, B, S, F, u), C[0] = Ke(I, 0, u), Q = B[0] << Lr, Re = Q, fe = M[B[0]], Te = Je[fe], Ne = Je[fe + 1]); let Ee = on[Te + l] | on[Ne + A], Be = we[Re + Ee]; C[0]--, A = l, l = oe(c[0].codes, c[0].htrees[Be], u), d[n & w] = l, (n & w) === w && t.write(d, p), n++ } if (E -= le, E <= 0) break; if (b < 0) { u.readMoreInput(), C[2] === 0 && (pt(x[2], y, 2, B, S, F, u), C[2] = Ke(I, 2 * 1080, u), ye = B[2] << Sr), C[2]--; let z = (Z > 4 ? 3 : Z - 2) & 255, Ee = Fe[ye + z]; if (b = oe(c[2].codes, c[2].htrees[Ee], u), b >= P) { b -= P; let Be = b & U; b >>= R; let _e = (b >> 1) + 1, Et = (2 + (b & 1) << _e) - 4; b = P + (Et + u.readBits(_e) << R) + Be } } let Pe = uo(b, s, f); if (Pe < 0) throw new Error("[BrotliDecompress] invalid distance"); n < h && o !== h ? o = n : o = h; let Xe = n & w; if (Pe > o) if (Z >= Ao && Z <= Ur) { let z = ao[Z], Ee = Pe - o - 1, Be = lo[Z], _e = (1 << Be) - 1, Et = Ee & _e, mn = Ee >> Be; if (z += Et * Z, mn < br) { let Bt = xr(d, Xe, z, Z, mn); if (Xe += Bt, n += Bt, E -= Bt, Xe >= g) { t.write(d, p); for (let $e = 0; $e < Xe - g; $e++)d[$e] = d[g + $e] } } else throw new Error("Invalid backward reference") } else throw new Error("Invalid backward reference"); else { if (b > 0 && (s[f & 3] = Pe, f++), Z > E) throw new Error("Invalid backward reference"); for (let z = 0; z < Z; z++)d[n & w] = d[n - Pe & w], (n & w) === w && t.write(d, p), n++, E-- } l = d[n - 1 & w], A = d[n - 2 & w] } n &= 1073741823 } t.write(d, n & w) } function uo(e, t, n) { return e < cn ? (n += so[e], n &= 3, t[n] + fo[e]) : e - cn + 1 } function gn(e, t) { let n = new Uint8Array(t); try { let r = 0, i = 0; for (; r < e.length - 8;) { let o = e[r++] << 24 | e[r++] << 16 | e[r++] << 8 | e[r++], s = e[r++] << 24 | e[r++] << 16 | e[r++] << 8 | e[r++]; if (e.length - r < s) throw new Error("lz4 not hadoop"); if (n.length < o) throw new Error("lz4 not hadoop"); if (dn(e.subarray(r, r + s), n, i) !== o) throw new Error("lz4 not hadoop"); if (r += s, i += o, r === e.length) return n } if (r < e.length) throw new Error("lz4 not hadoop") } catch (r) { if (r instanceof Error && r.message !== "lz4 not hadoop") throw r; dn(e, n, 0) } return n } function pn(e, t) { let n = new Uint8Array(t); return dn(e, n, 0), n } function dn(e, t, n) { let r = n; for (let i = 0; i < e.length;) { let o = e[i++], s = o >> 4; if (s) { let u = s + 240; for (; u === 255;)s += u = e[i++]; if (t.set(e.subarray(i, i + s), r), r += s, i += s, i >= e.length) return r - n } let f = e[i++] | e[i++] << 8; if (!f || f > r) throw new Error(`lz4 offset out of range ${f}`); let l = (o & 15) + 4, A = l + 240; for (; A === 255;)l += A = e[i++]; let c = r - f, a = r + l; for (; r < a;)t[r++] = t[c++] } return r - n } var hn = { SNAPPY: nr(), GZIP: (e, t) => Qe(e, new Uint8Array(t)), BROTLI: un, ZSTD: e => tr(e), LZ4: gn, LZ4_RAW: pn }; var D = e => document.getElementById(e), N = emptySession(), tabs = new Map, activeTab = null, copyRequest = 0, Qr = "UNCOMPRESSED, SNAPPY, GZIP, BROTLI, LZ4, LZ4_RAW, and ZSTD";
+
+        // The UI language is independent from raw Parquet values, CSV, and decoder behavior.
+        const JA = {
+            "Language": "言語",
+            "A self-contained, offline Parquet file viewer. Your files never leave this browser.": "Parquetファイルをブラウザで確認できます。ファイルは外部へ送信されません。",
+            "Choose Parquet files": "Parquetファイルを選択",
+            "Select one or more files, or drag and drop them here": "ファイルを選ぶか、ここにドラッグ＆ドロップしてください（複数可）",
+            "Open files": "開いているファイル",
+            "Preview reads only the current page from the file. The full file is not expanded into memory.": "現在のページに必要なデータだけを読み込みます。ファイル全体をメモリに展開しません。",
+            "Schema": "スキーマ", "File metadata": "ファイル情報", "Data preview": "データのプレビュー",
+            "Field": "フィールド", "Type": "型", "Repetition": "繰り返し", "Key": "キー", "Value": "値",
+            "Download CSV": "CSVを保存", "Copy CSV": "CSVをコピー", "Copied": "コピーしました",
+            "Download the current preview page as CSV": "表示中のページをCSVとして保存",
+            "Copy the current preview page as CSV": "表示中のページをCSVとしてコピー",
+            "Sorts this page only": "並べ替えは表示中のページのみ",
+            "Current page values": "現在のページの値を検索",
+            "Find values on this page": "このページ内を検索",
+            "Previous match": "前の一致", "Next match": "次の一致", "Clear": "クリア",
+            "Previous matching row": "前の一致行", "Next matching row": "次の一致行",
+            "Finds literal text in displayed values on this page, ignoring case. Binary values include only their displayed summary (first 24 bytes). Enter: next match; Shift+Enter: previous; Escape: clear.": "このページに表示されている値を検索します（大文字・小文字は区別しません）。バイナリ値は表示されている先頭24バイト分のみが対象です。Enter：次の一致、Shift+Enter：前の一致、Escape：クリア。",
+            "Previous page": "前のページ", "Next page": "次のページ", "Page": "ページ", "Rows": "行数",
+            "File": "ファイル", "Size": "サイズ", "Row groups": "行グループ", "Format": "形式", "Codecs": "圧縮方式",
+            "No fields found.": "フィールドがありません。", "No file metadata found.": "ファイル情報がありません。",
+            "No rows in this range.": "この範囲に行はありません。",
+            "sort ascending": "昇順に並べ替え", "sort descending": "降順に並べ替え", "reset sort": "並べ替えを解除",
+            "Click: ascending · click again: descending · third click: reset": "クリックで昇順、もう一度で降順、3回目で解除",
+            "Close": "閉じる",
+            "Reading Parquet metadata…": "Parquetファイルの情報を読み込んでいます…",
+            "This is not a Parquet file: missing PAR1 header.": "Parquetファイルではありません（PAR1ヘッダーがありません）。",
+            "The file appears truncated or its Parquet footer is invalid.": "ファイルが途中で切れているか、Parquetのフッターが不正です。",
+            "Preview could not be rendered. Try a smaller page size.": "プレビューを表示できませんでした。1ページの行数を減らしてみてください。",
+            "Could not download CSV.": "CSVを保存できませんでした。",
+            "Could not copy CSV. Use Download CSV instead.": "CSVをコピーできませんでした。「CSVを保存」を試してください。"
+        };
+        let lang = (() => {
+            try { const saved = localStorage.getItem("parquet-viewer-language"); if (saved === "ja" || saved === "en") return saved; } catch {}
+            return typeof navigator !== "undefined" && /^ja(?:-|$)/i.test(navigator.language || "") ? "ja" : "en";
+        })();
+        function i18n(key) { return lang === "ja" ? (JA[key] || key) : key }
+        function localizedStatus(value) {
+            if (lang !== "ja") return value;
+            if (Object.hasOwn(JA, value)) return JA[value];
+            let match;
+            if ((match = /^Ready — supports (.+)[.]$/.exec(value))) return "準備完了 — 対応する圧縮方式：" + match[1];
+            if ((match = /^Reading rows (.+)–(.+) of (.+)…$/.exec(value))) return "全" + match[3] + "行のうち" + match[1] + "〜" + match[2] + "行を読み込んでいます…";
+            if ((match = /^Ready — previewing (.+) rows only[.]$/.exec(value))) return "準備完了 — " + match[1] + "行をプレビューしています。";
+            if ((match = /^This file uses an encoding or compression method not supported by this viewer: (.+)[.]$/.exec(value))) return "未対応のエンコード方式または圧縮方式です：" + match[1];
+            if ((match = /^Could not read this file: (.*)$/.exec(value))) return "ファイルを読み込めませんでした：" + match[1];
+            return value;
+        }
+        function renderLocale() {
+            D("language").value = lang;
+            document.documentElement?.setAttribute?.("lang", lang);
+            document.title = lang === "ja" ? "Parquet ビューアー | HTML Parquet Viewer" : "HTML Parquet Viewer";
+            document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = i18n(el.getAttribute("data-i18n")); });
+            for (const attr of ["title", "aria-label"]) {
+                document.querySelectorAll("[data-i18n-" + attr + "]").forEach(el => {
+                    el.setAttribute(attr, i18n(el.getAttribute("data-i18n-" + attr)));
+                });
+            }
+            D("language").setAttribute("aria-label", i18n("Language"));
+        }
         function emptySession(file = null, pageSize = 100) {
             return { file, metadata: null, schema: null, page: 0, pageSize, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1, request: 0, loading: false, completedPage: null, findQuery: "", findRows: [], findIndex: 0, statusText: "", statusClass: "ok" };
         }
@@ -1627,7 +1689,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
         function renderSession() {
             ho();
             D("sort-note").hidden = true;
-            D("copy-csv").textContent = "Copy CSV";
+            D("copy-csv").textContent = i18n("Copy CSV");
             D("copy-csv").classList.remove("copied");
             if (N.metadata) {
                 mo();
@@ -1642,7 +1704,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                         sessionStatus(N, friendlyError(err, "preview"), "error");
                     }
                 }
-                D("page-label").textContent = `Page ${N.page + 1} of ${Math.max(1, Math.ceil(N.rows / N.pageSize))}`;
+                D("page-label").textContent = lang === "ja" ? `全${Math.max(1, Math.ceil(N.rows / N.pageSize))}ページ中 ${N.page + 1}ページ` : `Page ${N.page + 1} of ${Math.max(1, Math.ceil(N.rows / N.pageSize))}`;
                 D("row-jump").value = N.page + 1;
                 D("row-jump").max = Math.max(1, Math.ceil(N.rows / N.pageSize));
                 D("pager").hidden = false;
@@ -1654,7 +1716,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function go(e) { if (typeof e == "bigint") return e.toString(); if (e instanceof Uint8Array) return `Uint8Array(${e.byteLength}) ${Array.from(e.slice(0, 24)).map(t => t.toString(16).padStart(2, "0")).join("")}${e.byteLength > 24 ? "…" : ""}`; if (e instanceof Date) return e.toISOString(); if (e == null) return ""; if (typeof e == "object") try { return JSON.stringify(e, (t, n) => typeof n == "bigint" ? n.toString() : n) } catch { return String(e) } return String(e) }
 		function se(e) { return go(e).replace(/[&<>'"]/g, t => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[t]) }
 		function po(e) { if (!e) return "0 B"; let t = ["B", "KB", "MB", "GB", "TB"], n = Math.min(Math.floor(Math.log(e) / Math.log(1024)), t.length - 1); return `${(e / 1024 ** n).toFixed(n ? 2 : 0)} ${t[n]}` }
-		function je(e, t = "") { let n = D("status"); n.textContent = e; n.className = t }
+		function je(e, t = "") { let n = D("status"); n.textContent = localizedStatus(e); n.className = t }
 		function busy(loading) {
             let unavailable = loading || !N.metadata;
             D("prev").disabled = unavailable || N.page === 0;
@@ -1670,12 +1732,12 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
 		function wo(e) { let t = new Set; for (let n of e.row_groups || []) for (let r of n.columns || []) t.add(r.meta_data?.codec || "UNCOMPRESSED"); return [...t].join(", ") || "UNCOMPRESSED" }
 		function shortType(t) { let s = String(t || "value").toLowerCase().replaceAll("_", " "); if (s.includes("timestamp")) return "time"; if (s.includes("decimal")) return "decimal"; if (s.includes("uint64")) return "uint64"; if (s.includes("uint32")) return "uint32"; if (s.includes("int64")) return "int64"; if (s.includes("int32")) return "int32"; if (s.includes("double")) return "float64"; if (s.includes("float")) return "float32"; if (s.includes("boolean")) return "bool"; if (s.includes("utf8") || s.includes("string") || s.includes("byte array")) return "text"; if (s.includes("date")) return "date"; if (s.includes("list")) return "list"; if (s.includes("map")) return "map"; return s.replace("fixed len ", "").slice(0, 14) }
 		function columnTypes() { let m = new Map; for (let f of Fr(N.schema)) { m.set(f.name, shortType(f.type)); m.set(f.name.split(".").at(-1), shortType(f.type)) } return m }
-		function mo() { let e = N.metadata, t = [["File", N.file.name], ["Size", po(N.file.size)], ["Rows", Number(e.num_rows).toLocaleString()], ["Row groups", (e.row_groups || []).length.toLocaleString()], ["Format", e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], ["Codecs", wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(r)}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; D("schema-section").hidden = !1; D("metadata-section").hidden = !1; D("preview-section").hidden = !1; D("page-size").value = String(N.pageSize); let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || '<tr><td colspan="3">No fields found.</td></tr>'; let meta = [["created_by", e.created_by], ...(e.key_value_metadata || []).map(r => [r.key, r.value])].filter(([, v]) => v !== undefined && v !== null && v !== ""); D("metadata-body").innerHTML = meta.map(([k, v]) => `<tr><td>${se(k)}</td><td title="${se(v)}">${se(v)}</td></tr>`).join("") || '<tr><td colspan="2">No file metadata found.</td></tr>' }
+		function mo() { let e = N.metadata, t = [["File", N.file.name], ["Size", po(N.file.size)], ["Rows", Number(e.num_rows).toLocaleString()], ["Row groups", (e.row_groups || []).length.toLocaleString()], ["Format", e.version === 2 ? "Parquet v2" : `Parquet v${e.version}`], ["Codecs", wo(e)]]; D("summary").innerHTML = t.map(([r, i]) => `<div class="fact"><span>${se(i18n(r))}</span><strong title="${se(i)}">${se(i)}</strong></div>`).join(""); D("summary").hidden = !1; D("memory-note").hidden = !1; D("schema-section").hidden = !1; D("metadata-section").hidden = !1; D("preview-section").hidden = !1; D("page-size").value = String(N.pageSize); let n = Fr(N.schema); D("schema-body").innerHTML = n.map(r => `<tr><td>${se(r.name)}</td><td>${se(shortType(r.type))}</td><td>${se(r.repetition)}</td></tr>`).join("") || `<tr><td colspan="3">${i18n('No fields found.')}</td></tr>`; let meta = [["created_by", e.created_by], ...(e.key_value_metadata || []).map(r => [r.key, r.value])].filter(([, v]) => v !== undefined && v !== null && v !== ""); D("metadata-body").innerHTML = meta.map(([k, v]) => `<tr><td>${se(k)}</td><td title="${se(v)}">${se(v)}</td></tr>`).join("") || `<tr><td colspan="2">${i18n('No file metadata found.')}</td></tr>` }
 		function renderTabs() {
             let focused = document.activeElement, ownedFocus = focused && D("tabs").contains(focused);
             let kind = ownedFocus ? (focused.dataset.close ? "close" : focused.dataset.tab ? "tab" : null) : null;
             let focusId = kind && focused.dataset[kind];
-            D("tabs").innerHTML = [...tabs].map(([id, t]) => `<div class="file-tab ${id === activeTab ? "active" : ""}" role="presentation"><button type="button" class="tab" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span></button><button type="button" class="tab-close" title="Close ${se(t.file.name)}" data-close="${id}" aria-label="Close ${se(t.file.name)}">×</button></div>`).join("");
+            D("tabs").innerHTML = [...tabs].map(([id, t]) => `<div class="file-tab ${id === activeTab ? "active" : ""}" role="presentation"><button type="button" class="tab" role="tab" aria-selected="${id === activeTab}" data-tab="${id}" title="${se(t.file.name)}"><span class="tab-name">${se(t.file.name)}</span></button><button type="button" class="tab-close" title="${i18n("Close")} ${se(t.file.name)}" data-close="${id}" aria-label="${i18n("Close")} ${se(t.file.name)}">×</button></div>`).join("");
             if (kind) {
                 let target = [...D("tabs").querySelectorAll(`[data-${kind}]`)].find(button => button.dataset[kind] === focusId)
                     || [...D("tabs").querySelectorAll("[data-tab]")].find(button => button.dataset.tab === activeTab)
@@ -1731,7 +1793,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             D("find-prev").disabled = !matches.length;
             D("find-next").disabled = !matches.length;
             D("find-clear").disabled = !query;
-            D("find-count").textContent = available && query ? (matches.length ? `${N.findIndex + 1} of ${matches.length} matching rows on this page` : "0 matching rows on this page") : "";
+            D("find-count").textContent = available && query ? (matches.length ? (lang === "ja" ? `このページの一致行 ${N.findIndex + 1}/${matches.length}` : `${N.findIndex + 1} of ${matches.length} matching rows on this page`) : (lang === "ja" ? "このページの一致行 0件" : "0 matching rows on this page")) : "";
         }
         function scrollToFindMatch() {
             if (findable() && N.findRows?.length) D("data-body").querySelector('[data-find-current="true"]')?.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -1764,10 +1826,10 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             let matches = new Set(N.findRows), current = N.findRows[N.findIndex];
             D("data-head").innerHTML = "<tr><th>#</th>" + cols.map(c => {
                 let sorted = N.sortColumn === c, order = sorted ? (N.sortDirection === 1 ? "ascending" : "descending") : "none";
-                let action = !sorted ? "sort ascending" : N.sortDirection === 1 ? "sort descending" : "reset sort";
-                return `<th data-column="${se(c)}" aria-sort="${order}" title="Click: ascending · click again: descending · third click: reset"><button type="button" class="column-sort" data-sort="${se(c)}" aria-label="${se(c)}: ${action}">${se(c)}${sorted ? `<span class="sort-indicator" aria-hidden="true">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></button></th>`;
+                let action = i18n(!sorted ? "sort ascending" : N.sortDirection === 1 ? "sort descending" : "reset sort");
+                return `<th data-column="${se(c)}" aria-sort="${order}" title="${se(i18n("Click: ascending · click again: descending · third click: reset"))}"><button type="button" class="column-sort" data-sort="${se(c)}" aria-label="${se(c)}: ${action}">${se(c)}${sorted ? `<span class="sort-indicator" aria-hidden="true">${N.sortDirection === 1 ? "↑" : "↓"}</span>` : ""}<span class="type-badge">${se(types.get(c) || "value")}</span></button></th>`;
             }).join("") + "</tr>";
-            D("data-body").innerHTML = rows.map((row, i) => `<tr${matches.has(i) ? ` class="find-match${i === current ? " find-current" : ""}"` : ""} data-find-row="${i}"${i === current ? ' data-find-current="true" aria-current="true"' : ""}><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || "<tr><td>No rows in this range.</td></tr>";
+            D("data-body").innerHTML = rows.map((row, i) => `<tr${matches.has(i) ? ` class="find-match${i === current ? " find-current" : ""}"` : ""} data-find-row="${i}"${i === current ? ' data-find-current="true" aria-current="true"' : ""}><td class="rownum">${(start + i).toLocaleString()}</td>${cols.map(c => `<td title="${se(row[c])}">${cell(row[c])}</td>`).join("")}</tr>`).join("") || `<tr><td>${i18n("No rows in this range.")}</td></tr>`;
             D("sort-note").hidden = !N.sortColumn;
             renderFindControls();
             D("data-head").querySelectorAll("th[data-column]").forEach(th => th.onclick = () => {
@@ -1866,16 +1928,16 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             let session = N, page = N.completedPage, id = activeTab, request = ++copyRequest;
             const current = () => request === copyRequest && activeSession(id, session) && N.completedPage === page;
             let button = D("copy-csv");
-            button.textContent = "Copy CSV";
+            button.textContent = i18n("Copy CSV");
             button.classList.remove("copied");
             try {
                 await copyText(csv());
                 if (!current()) return;
-                button.textContent = "Copied";
+                button.textContent = i18n("Copied");
                 button.classList.add("copied");
                 setTimeout(() => {
                     if (!current()) return;
-                    button.textContent = "Copy CSV";
+                    button.textContent = i18n("Copy CSV");
                     button.classList.remove("copied");
                 }, 1500);
             } catch (err) {
@@ -1884,7 +1946,9 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                 je("Could not copy CSV. Use Download CSV instead.", "error");
             }
         };
-        document.querySelectorAll(".section-heading").forEach(b => b.onclick = () => { let content = D(b.getAttribute("aria-controls")), shown = !content.hidden; content.hidden = shown; b.setAttribute("aria-expanded", String(!shown)) }); renderSession();
+        document.querySelectorAll(".section-heading").forEach(b => b.onclick = () => { let content = D(b.getAttribute("aria-controls")), shown = !content.hidden; content.hidden = shown; b.setAttribute("aria-expanded", String(!shown)) });
+        D("language").onchange = e => { lang = e.target.value === "ja" ? "ja" : "en"; try { localStorage.setItem("parquet-viewer-language", lang) } catch {} renderLocale(); renderTabs(); renderSession(); };
+        renderLocale(); renderSession();
 	</script>
 
 <!--
