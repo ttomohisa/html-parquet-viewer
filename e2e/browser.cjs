@@ -212,3 +212,26 @@ test('invalid inputs, tab recovery, file:// startup, blocked network', { timeout
   } catch (err) { await captureOnFailure(offline.page, err, 'offline-file'); }
   finally { await offline.close(); }
 });
+
+test('synthetic Parquet codec matrix also renders correct raw bytes and Unicode in Edge', { timeout: 150000 }, async () => {
+  const h = await openPage({ width: 390 });
+  try {
+    for (const codec of ['none', 'snappy', 'gzip', 'brotli', 'zstd', 'lz4']) {
+      const fixture = path.join(root, 'e2e', 'generated-fixtures', codec + '.parquet');
+      await h.page.locator('#file').setInputFiles(fixture);
+      await ready(h.page);
+      const firstRow = h.page.locator('#data-body tr').first();
+      const values = await firstRow.locator('td:not(.rownum)').allTextContents();
+      assert.ok(values.includes('東京-000'), codec + ': Japanese column must remain text');
+      assert.ok(values.includes('Uint8Array(3) 0000ff'), codec + ': raw binary must keep 0xFF instead of replacement character');
+      assert.match(await h.page.locator('#summary').innerText(), /Row groups\s*8/);
+      const saved = await downloadCsv(h.page);
+      assert.ok(saved.value.includes('Uint8Array(3) 0000ff'), codec + ': CSV must reflect raw binary summary');
+      await h.page.locator('#tabs [data-close]').last().click();
+      assert.equal(await h.page.locator('#tabs [data-tab]').count(), 0);
+    }
+    assert.equal(h.errors.length, 0, h.errors.join('; '));
+    assert.deepEqual(h.unexpectedRequests, []);
+  } catch (err) { await captureOnFailure(h.page, err, 'codec-browser'); }
+  finally { await h.close(); }
+});
