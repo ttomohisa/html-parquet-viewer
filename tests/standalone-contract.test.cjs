@@ -39,7 +39,7 @@ test('existing markup and restrictive CSP stay intact around the intentional UI 
   assert.match(markup, /id="language" aria-label="Language"/);
   assert.match(markup, /<option value="en">English<\/option>/);
   assert.match(markup, /<option value="ja">日本語<\/option>/);
-  assert.match(markup, /id="find-query"[^>]*aria-describedby="find-help find-count"/);
+  assert.match(html, /id="find-query"[^>]*aria-describedby="find-help find-count"/);
   assert.match(markup, /id="tabs" role="tablist"/);
   assert.match(markup, /\.column-sort\s*\{/);
   assert.match(markup, /\.tab:focus-visible/);
