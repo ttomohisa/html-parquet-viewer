@@ -1680,6 +1680,50 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
             D("language").setAttribute("aria-label", targetLabel);
             D("language").setAttribute("title", targetLabel);
         }
+        // Override the bundled LZ4_RAW path without editing the pinned third-party bytes.
+        // Long LZ4 matches carry extension bytes after a 15-length nibble.
+        function decompressLz4Raw(input, expectedLength) {
+            if (!Number.isSafeInteger(expectedLength) || expectedLength < 0) throw new Error("Invalid LZ4 output length");
+            const output = new Uint8Array(expectedLength);
+            let read = 0, written = 0;
+            while (read < input.length) {
+                const token = input[read++];
+                let literals = token >>> 4;
+                if (literals === 15) {
+                    let part;
+                    do {
+                        if (read >= input.length) throw new Error("Truncated LZ4 literal length");
+                        part = input[read++];
+                        literals += part;
+                    } while (part === 255);
+                }
+                if (read + literals > input.length || written + literals > expectedLength) throw new Error("Invalid LZ4 literal length");
+                output.set(input.subarray(read, read + literals), written);
+                read += literals;
+                written += literals;
+                if (read === input.length) break;
+                if (read + 2 > input.length) throw new Error("Truncated LZ4 match offset");
+                const offset = input[read] | input[read + 1] << 8;
+                read += 2;
+                if (!offset || offset > written) throw new Error("Invalid LZ4 match offset");
+                let match = (token & 15) + 4;
+                if ((token & 15) === 15) {
+                    let part;
+                    do {
+                        if (read >= input.length) throw new Error("Truncated LZ4 match length");
+                        part = input[read++];
+                        match += part;
+                    } while (part === 255);
+                }
+                if (written + match > expectedLength) throw new Error("Invalid LZ4 match length");
+                const end = written + match;
+                while (written < end) { output[written] = output[written - offset]; written++; }
+            }
+            if (written !== expectedLength) throw new Error("Invalid LZ4 decompressed length");
+            return output;
+        }
+        hn.LZ4_RAW = decompressLz4Raw;
+
         function emptySession(file = null, pageSize = 100) {
             return { file, metadata: null, schema: null, page: 0, pageSize, rows: 0, lastRows: [], lastColumns: [], sortColumn: null, sortDirection: 1, request: 0, loading: false, completedPage: null, findQuery: "", findRows: [], findIndex: 0, statusText: "", statusClass: "ok" };
         }
