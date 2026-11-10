@@ -357,6 +357,12 @@
 			background: transparent
 		}
 
+		.header-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+		.locale-picker { display: flex; align-items: center; gap: 8px; flex: none; }
+		.locale-picker label { color: var(--muted); font-size: 12px; }
+		.locale-picker select { min-height: 38px; }
+		@media(max-width:600px) { .header-top { align-items: flex-start; } .locale-picker { margin-left: auto; } }
+
 		#copy-csv.copied {
 			border-color: var(--ok);
 			color: var(--ok)
@@ -530,7 +536,7 @@
 <body>
 	<main>
 		<header>
-			<div class="title">
+			<div class="header-top"><div class="title">
 				<svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
   <rect x="0" y="0" width="24" height="24" rx="6" ry="6" fill="#16624F" />
   <path
@@ -540,32 +546,32 @@
 </svg>
 
 				<h1>HTML Parquet Viewer</h1>
-			</div>
+			</div><div class="locale-picker"><label for="language" data-i18n="Language">Language</label><select id="language" aria-label="Language"><option value="en">English</option><option value="ja">日本語</option></select></div></div>
 
-			<p>A self-contained, offline Parquet file viewer. Your files never leave this browser.</p>
+			<p data-i18n="A self-contained, offline Parquet file viewer. Your files never leave this browser.">A self-contained, offline Parquet file viewer. Your files never leave this browser.</p>
 		</header>
-		<div id="drop"><button class="button" id="choose-file" type="button">Choose Parquet files</button><input id="file" type="file"
+		<div id="drop"><button class="button" id="choose-file" type="button" data-i18n="Choose Parquet files">Choose Parquet files</button><input id="file" type="file"
 				multiple accept=".parquet,application/octet-stream">
-			<div class="hint">Select one or more files, or drag and drop them here</div>
+			<div class="hint" data-i18n="Select one or more files, or drag and drop them here">Select one or more files, or drag and drop them here</div>
 		</div>
 		<p id="status" role="status" aria-live="polite"></p>
-		<div id="tabs" role="tablist" aria-label="Open files"></div>
+		<div id="tabs" role="tablist" aria-label="Open files" data-i18n-aria-label="Open files"></div>
 		<div id="summary" hidden></div>
-		<p id="memory-note" hidden>Preview reads only the current page from the file. The full file is not expanded into
+		<p id="memory-note" hidden data-i18n="Preview reads only the current page from the file. The full file is not expanded into memory.">Preview reads only the current page from the file. The full file is not expanded into
 			memory.</p>
 		<section class="collapsible" id="schema-section" hidden>
 			<div class="section-title"><button class="section-heading" aria-expanded="true"
 					aria-controls="schema-content">
-					<h2>Schema</h2><span class="section-chevron" aria-hidden="true">⌄</span>
+					<h2 data-i18n="Schema">Schema</h2><span class="section-chevron" aria-hidden="true">⌄</span>
 				</button></div>
 			<div id="schema-content" class="section-content">
 				<div class="scroll">
 					<table>
 						<thead>
 							<tr>
-								<th>Field</th>
-								<th>Type</th>
-								<th>Repetition</th>
+								<th data-i18n="Field">Field</th>
+								<th data-i18n="Type">Type</th>
+								<th data-i18n="Repetition">Repetition</th>
 							</tr>
 						</thead>
 						<tbody id="schema-body"></tbody>
@@ -576,15 +582,15 @@
 		<section class="collapsible" id="metadata-section" hidden>
 			<div class="section-title"><button class="section-heading" aria-expanded="true"
 					aria-controls="metadata-content">
-					<h2>File metadata</h2><span class="section-chevron" aria-hidden="true">⌄</span>
+					<h2 data-i18n="File metadata">File metadata</h2><span class="section-chevron" aria-hidden="true">⌄</span>
 				</button></div>
 			<div id="metadata-content" class="section-content">
 				<div class="scroll">
 					<table>
 						<thead>
 							<tr>
-								<th>Key</th>
-								<th>Value</th>
+								<th data-i18n="Key">Key</th>
+								<th data-i18n="Value">Value</th>
 							</tr>
 						</thead>
 						<tbody id="metadata-body"></tbody>
@@ -595,23 +601,23 @@
 		<section class="collapsible" id="preview-section" hidden>
 			<div class="section-title"><button class="section-heading" aria-expanded="true"
 					aria-controls="preview-content">
-					<h2>Data preview</h2><span class="section-chevron" aria-hidden="true">⌄</span>
+					<h2 data-i18n="Data preview">Data preview</h2><span class="section-chevron" aria-hidden="true">⌄</span>
 				</button>
-				<div class="section-actions"><button id="download-csv" title="Download the current preview page as CSV">Download CSV</button><button id="copy-csv" title="Copy the current preview page as CSV">Copy
+				<div class="section-actions"><button id="download-csv" title="Download the current preview page as CSV" data-i18n="Download CSV" data-i18n-title="Download the current preview page as CSV">Download CSV</button><button id="copy-csv" title="Copy the current preview page as CSV" data-i18n="Copy CSV" data-i18n-title="Copy the current preview page as CSV">Copy
 						CSV</button></div>
 			</div>
-			<p id="sort-note" hidden>Sorts this page only</p>
+			<p id="sort-note" hidden data-i18n="Sorts this page only">Sorts this page only</p>
 			<div id="preview-content" class="section-content">
                 <!-- Page find controls -->
-                <div class="page-find" role="search" aria-label="Current page values">
-                    <label for="find-query">Find values on this page</label>
+                <div class="page-find" role="search" aria-label="Current page values" data-i18n-aria-label="Current page values">
+                    <label for="find-query" data-i18n="Find values on this page">Find values on this page</label>
                     <input id="find-query" type="search" autocomplete="off" spellcheck="false" aria-describedby="find-help find-count" disabled>
-                    <button id="find-prev" type="button" aria-label="Previous matching row" disabled>Previous match</button>
-                    <button id="find-next" type="button" aria-label="Next matching row" disabled>Next match</button>
-                    <button id="find-clear" type="button" disabled>Clear</button>
+                    <button id="find-prev" type="button" aria-label="Previous matching row" data-i18n="Previous match" data-i18n-aria-label="Previous matching row" disabled>Previous match</button>
+                    <button id="find-next" type="button" aria-label="Next matching row" data-i18n="Next match" data-i18n-aria-label="Next matching row" disabled>Next match</button>
+                    <button id="find-clear" type="button" data-i18n="Clear" disabled>Clear</button>
                     <span id="find-count" role="status" aria-live="polite" aria-atomic="true"></span>
                 </div>
-                <p id="find-help">Finds literal text in displayed values on this page, ignoring case. Binary values include only their displayed summary (first 24 bytes). Enter: next match; Shift+Enter: previous; Escape: clear.</p>
+                <p id="find-help" data-i18n="Finds literal text in displayed values on this page, ignoring case. Binary values include only their displayed summary (first 24 bytes). Enter: next match; Shift+Enter: previous; Escape: clear.">Finds literal text in displayed values on this page, ignoring case. Binary values include only their displayed summary (first 24 bytes). Enter: next match; Shift+Enter: previous; Escape: clear.</p>
                 <!-- /Page find controls -->
 				<div class="scroll">
 					<table>
@@ -620,10 +626,10 @@
 					</table>
 				</div>
 				<div id="pager" hidden>
-					<div class="page-nav"><button id="prev" title="Previous page"
-							aria-label="Previous page">‹</button><span id="page-label"></span><button id="next"
-							title="Next page" aria-label="Next page">›</button></div><label>Page <input id="row-jump"
-							type="number" min="1" step="1" inputmode="numeric"></label><label>Rows <select
+					<div class="page-nav"><button id="prev" title="Previous page" data-i18n-title="Previous page"
+							aria-label="Previous page" data-i18n-aria-label="Previous page">‹</button><span id="page-label"></span><button id="next"
+							title="Next page" aria-label="Next page" data-i18n-title="Next page" data-i18n-aria-label="Next page">›</button></div><label><span data-i18n="Page">Page</span> <input id="row-jump"
+							type="number" min="1" step="1" inputmode="numeric"></label><label><span data-i18n="Rows">Rows</span> <select
 							id="page-size">
 							<option>50</option>
 							<option selected>100</option>
