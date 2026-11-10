@@ -1877,6 +1877,7 @@ vmbCnCfH5TJKTBFva0O4Wl+l/Ix13xO6KCJPD5H51fete+aO/R8EyzZRoN8BAA==`, wt; function 
                 let header = new Uint8Array(await file.slice(0, 4));
                 if (!current()) return;
                 if (String.fromCharCode(...header) !== "PAR1") throw new Error("missing PAR1 header");
+                if (file.size < 12) throw new Error("file too short");
                 let metadata = await Oe(file);
                 if (!current()) return;
                 session.metadata = metadata;
