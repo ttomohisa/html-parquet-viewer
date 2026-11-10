@@ -3,6 +3,7 @@
   "slug": "parquet-viewer",
   "versionPolicy": "unversioned",
   "languages": [
+    "ja",
     "en"
   ],
   "license": "MIT",
