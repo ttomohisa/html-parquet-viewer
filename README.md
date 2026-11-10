@@ -57,7 +57,7 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 
 - Paging reads the current range of rows from the local file.
 - Sorting and finding are explicitly limited to the current preview page. Finding never filters rows or reads another page.
-- Find is case-insensitive and searches displayed cell text, including the `null` marker. Empty cells remain empty. Binary values are searched only through their displayed summary (the first 24 bytes), not their hidden bytes.
+- Find is case-insensitive and searches displayed cell text, including the `null` marker. Empty cells remain empty. Unannotated binary columns are preserved as bytes and shown as a byte-length/hex summary (up to the first 24 bytes); finding and CSV export use that summary, not the full hidden byte sequence.
 - Each tab keeps its find query in memory. Page and sort changes reset the current match; loading or failed reads clear old results.
 - Files whose metadata cannot be read retain their own error tab, which can be closed.
 - Each tab retains its own completed preview and sort order. Switching back does not re-read a completed page.
@@ -107,11 +107,13 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ### State regression checks
 
-Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.
+Run `node --test tests/*.test.cjs` with Node.js 22 or newer for the dependency-free local regression suite (including decoding the checked-in real Snappy sample). No packages or build step are required to use the standalone HTML.
 
-The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Find checks cover literal/display-format matching, row navigation, tab/page ownership, and unchanged CSV/read behavior. BigInt checks cover signed INT64 extremes and adjacent values beyond Number precision. Keyboard-control checks cover native-button markup, sort state announcements, actual click handlers and focus continuity across tab/header replacement, including pending reads and newer focus. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
+The tests cover tab/request ownership, metadata and page failures, CSV identity, retry, sorting, navigation, empty results, clipboard callbacks, localized state, Unicode and BigInt values, and focus/keyboard behavior. They also pin the bundled third-party decoder and license notices, validate the offline CSP, and syntax-check the HTML script.
 
-These checks do not parse real Parquet, use a file picker or validate browser layout and native Tab / Enter / Space interaction. The manual file and browser checks above are still needed before release.
+The PR preview workflow runs additional integration tests using **test-only tooling**. It generates 123-row, eight-row-group Parquet fixtures with PyArrow for six codec configurations: uncompressed, Snappy, Gzip, Brotli, Zstandard and LZ4_RAW; it checks pages crossing row-group boundaries, raw binary fidelity, NULLs, Unicode, CSV-relevant values, both Parquet data-page versions and malformed inputs. A separate Playwright-driven test launches real Microsoft Edge on the Windows runner, opens the standalone HTML, loads local Parquet files, verifies language settings, sorting, page navigation, finding, CSV downloads, error recovery, mobile viewport geometry, blocked external requests and `file://` use. The synthetic fixtures and Playwright/PyArrow packages are CI-only and are not included in the app.
+
+To reproduce the deeper checks locally, install `playwright-core@1.56.1` and PyArrow `19.0.1` separately, run `python e2e/generate_fixtures.py`, then run `node --test e2e/codecs.cjs` and `node --test e2e/browser.cjs` with an available Edge, Chrome or Chromium executable. The browser checks use a local ephemeral HTTP server as well as a `file://` launch. Real devices, other browser engines, very large files and assistive-technology operation still require separate review.
 
 ## License and third-party notices
 
