@@ -38,6 +38,20 @@ jobs:
       - name: Run regression tests
         run: node --test
 
+      - name: Install browser testing dependency
+        run: npm install --no-save --no-package-lock --ignore-scripts playwright-core@1.56.1
+
+      - name: Run real Edge browser E2E
+        run: node --test e2e/browser.cjs
+
+      - name: Upload browser failure screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parquet-browser-e2e-${{ github.run_id }}
+          path: test-results/*.png
+          if-no-files-found: ignore
+
       - name: Validate and stage static app
         shell: pwsh
         run: |
