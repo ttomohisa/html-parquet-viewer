@@ -52,6 +52,20 @@ jobs:
           path: test-results/*.png
           if-no-files-found: ignore
 
+      - name: Setup Python for synthetic fixture generation
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install test-only Parquet writer
+        run: python -m pip install --disable-pip-version-check --only-binary=:all: pyarrow==19.0.1
+
+      - name: Generate synthetic codec fixtures
+        run: python e2e/generate_fixtures.py
+
+      - name: Run decoder/codec matrix and corruption checks
+        run: node --test e2e/codecs.cjs
+
       - name: Validate and stage static app
         shell: pwsh
         run: |
