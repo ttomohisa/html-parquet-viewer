@@ -23,6 +23,7 @@ function setup() {
     return { id, innerHTML: '', textContent: '', hidden: false, disabled: false, value: '', dataset: {}, style: {},
       classList: { add() {}, remove() {} }, addEventListener() {}, setAttribute() {}, remove() {},
       click() { downloads.push(this.download); },
+      querySelector() { return null; },
       querySelectorAll(selector) {
         this.headers = selector === 'th[data-column]' ? [...this.innerHTML.matchAll(/data-column="([^"]*)"/g)].map(m => ({ dataset: { column: m[1] } })) : [];
         return this.headers;
@@ -457,9 +458,9 @@ test('language toggle does not finish pending reads or enable stale CSV exports'
   assertExportsDisabled(h);
   h.reads.at(-1).resolve([{ value: 'ready' }]);
   await pending;
-  assert.equal(h.ctx.csv(), '"value"\\r\\n"ready"');
+  assert.equal(h.ctx.csv(), '"value"\r\n"ready"');
   assert.match(h.D('status').textContent, /準備完了/);
   h.D('language').onclick();
   assert.equal(h.D('status').textContent, 'Ready — previewing 1 rows only.');
-  assert.equal(h.ctx.csv(), '"value"\\r\\n"ready"');
+  assert.equal(h.ctx.csv(), '"value"\r\n"ready"');
 });
