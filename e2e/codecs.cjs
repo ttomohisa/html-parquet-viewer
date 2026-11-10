@@ -78,3 +78,17 @@ test('truncated, impossible footer-length and fuzzed input reject without hangin
     await assert.rejects(() => Oe(asAsyncFile(bytes)), undefined, 'random bytes ' + i);
   }
 });
+
+test('LZ4_RAW long-match extensions, overlapping copies and invalid bounds', () => {
+  const longMatch = Uint8Array.from([0x1f, 0x61, 0x01, 0x00, 76, 0x50, 49, 50, 51, 52, 53]);
+  const output = hn.LZ4_RAW(longMatch, 101);
+  assert.equal(output.length, 101);
+  assert.equal(Buffer.from(output).toString('ascii'), 'a'.repeat(96) + '12345');
+  assert.throws(() => hn.LZ4_RAW(longMatch, 100), /Invalid LZ4 match length/);
+  assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0xf0]), 1), /Truncated LZ4 literal length/);
+  assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0x10, 0x61, 0, 0]), 5), /Invalid LZ4 match offset/);
+  assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0x10, 0x61, 2, 0]), 5), /Invalid LZ4 match offset/);
+  assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0x20, 0x61]), 2), /Invalid LZ4 literal length/);
+  assert.throws(() => hn.LZ4_RAW(Uint8Array.from([0x10, 0x61]), 2), /Invalid LZ4 decompressed length/);
+  assert.throws(() => hn.LZ4_RAW(Uint8Array.from([]), -1), /Invalid LZ4 output length/);
+});
