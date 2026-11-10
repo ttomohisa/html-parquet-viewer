@@ -25,7 +25,7 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 
 ## Features
 
-- Switch between **Japanese and English** without closing a file or resetting the current page; the viewer starts in the saved language, or follows the browser language (Japanese browsers use Japanese, others use English)
+- Switch between **Japanese and English** using the minimal JA / EN header button without closing a file or resetting the current page; the viewer starts in the saved language, or follows the browser language (Japanese browsers use Japanese, others use English)
 - Open one or many local Parquet files from the picker or with drag and drop
 - Work with several files at once in closable tabs
 - Read Parquet v1 and v2 files
@@ -46,7 +46,7 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 
 1. Download [`parquet-viewer.html`](./parquet-viewer.html) from this repository.
 2. Open it in a current Chromium-based browser, Firefox, or Safari.
-3. Use the **Language / 言語** selector in the header to choose English or 日本語.
+3. Use the small **JA / EN** button in the header to switch between Japanese and English.
 4. Choose one or more `.parquet` files, or drag them into the drop area.
 
 There is no upload. Your selected files remain local to your browser session.
