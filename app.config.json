@@ -1,7 +1,7 @@
 {
   "name": "HTML Parquet Viewer",
   "slug": "parquet-viewer",
-  "versionPolicy": "unversioned",
+  "versionPolicy": "semver",
   "languages": [
     "ja",
     "en"
@@ -10,5 +10,6 @@
   "build": {
     "output": "parquet-viewer.html",
     "blockRuntimeNetwork": true
-  }
+  },
+  "version": "1.0.0"
 }
