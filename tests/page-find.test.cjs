@@ -79,7 +79,7 @@ const assertFindDisabled = h => {
 const key = (h, value, shiftKey = false) => { let prevented = false; h.D('find-query').onkeydown({ key: value, shiftKey, preventDefault() { prevented = true; } }); return prevented; };
 
 test('find markup labels the input, live count and current-page/binary limitations', () => {
-  assert.match(html, /<label for="find-query">Find values on this page<\/label>/);
+  assert.match(html, /<label for="find-query"[^>]*>Find values on this page<\/label>/);
   assert.match(html, /id="find-query"[^>]*aria-describedby="find-help find-count"/);
   assert.match(html, /id="find-count"[^>]*role="status"[^>]*aria-live="polite"/);
   assert.match(html, /Binary values include only their displayed summary \(first 24 bytes\)/);

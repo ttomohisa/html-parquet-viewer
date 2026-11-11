@@ -1,0 +1,112 @@
+name: Publish tagged release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/release.yml
+      - app.config.json
+      - releases/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: html-parquet-viewer-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'ttomohisa/html-parquet-viewer' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout merged main with tags
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Validate version, notes and standalone deliverable
+        id: meta
+        shell: bash
+        run: |
+          node --input-type=commonjs <<'NODE'
+          const fs = require('node:fs');
+          const config = JSON.parse(fs.readFileSync('app.config.json', 'utf8'));
+          if (config.versionPolicy !== 'semver' || !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(config.version)) {
+            throw new Error('app.config.json must declare a valid stable Semantic Version');
+          }
+          if (config.build?.output !== 'parquet-viewer.html' || config.build?.blockRuntimeNetwork !== true) {
+            throw new Error('Unexpected release output or network policy');
+          }
+          const tag = 'v' + config.version;
+          if (!fs.existsSync('releases/' + tag + '.md')) throw new Error('Missing curated release notes: ' + tag);
+          const html = fs.readFileSync('parquet-viewer.html', 'utf8');
+          if (!html.includes("connect-src 'none'") || !html.includes('THIRD-PARTY NOTICES')) {
+            throw new Error('Release HTML is missing required offline CSP or licenses');
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'tag=' + tag + '\n');
+          NODE
+
+      - name: Run regression tests on the release commit
+        run: node --test tests/*.test.cjs
+
+      - name: Check whether release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.tag }}
+        shell: bash
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists; keeping it unchanged."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Tag the exact merged commit
+        if: steps.check.outputs.exists == 'false'
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+        shell: bash
+        run: |
+          if git rev-parse --verify --quiet "refs/tags/$TAG" >/dev/null; then
+            target=$(git rev-list -n 1 "$TAG")
+            if [ "$target" != "$GITHUB_SHA" ]; then
+              echo "::error::Tag $TAG already points to another commit ($target). Refusing to move it."
+              exit 1
+            fi
+            echo "Tag $TAG already points at this commit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG" -m "HTML Parquet Viewer $TAG"
+            git push origin "refs/tags/$TAG"
+          fi
+
+      - name: Create release asset checksum
+        if: steps.check.outputs.exists == 'false'
+        run: sha256sum parquet-viewer.html > SHA256SUMS.txt
+
+      - name: Publish GitHub Release with standalone HTML
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.meta.outputs.tag }}
+        shell: bash
+        run: |
+          gh release create "$TAG" \
+            parquet-viewer.html SHA256SUMS.txt \
+            --title "HTML Parquet Viewer $TAG" \
+            --notes-file "releases/$TAG.md" \
+            --verify-tag \
+            --latest

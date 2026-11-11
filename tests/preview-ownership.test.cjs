@@ -23,6 +23,7 @@ function setup() {
     return { id, innerHTML: '', textContent: '', hidden: false, disabled: false, value: '', dataset: {}, style: {},
       classList: { add() {}, remove() {} }, addEventListener() {}, setAttribute() {}, remove() {},
       click() { downloads.push(this.download); },
+      querySelector() { return null; },
       querySelectorAll(selector) {
         this.headers = selector === 'th[data-column]' ? [...this.innerHTML.matchAll(/data-column="([^"]*)"/g)].map(m => ({ dataset: { column: m[1] } })) : [];
         return this.headers;
@@ -418,4 +419,68 @@ test('a failed new copy clears previous success feedback despite the superseded 
   h.ctx.navigator.clipboard.writeText = async () => { throw new Error('clipboard unavailable'); };
   await h.D('copy-csv').onclick(); oldTimer();
   assert.equal(h.D('copy-csv').textContent, 'Copy CSV'); assert.equal(h.D('status').className, 'error');
+});
+
+test('language toggle preserves loaded rows, sort order, find results, CSV and tab identity', async () => {
+  const h = setup(); h.seed('a', 'bilingual', 2);
+  h.run("tabs.get('a').pageSize = 2");
+  await loaded(h, 'a', [{ value: 'zeta' }, { value: 'alpha' }]);
+  h.D('data-head').headers.find(th => th.dataset.column === 'value').onclick();
+  h.D('find-query').oninput({ target: { value: 'alpha' } });
+  const csvBefore = h.ctx.csv();
+  const readCount = h.reads.length;
+  const activeBefore = h.ctx.activeTab;
+  assert.equal(h.D('find-count').textContent, '1 of 1 matching rows on this page');
+  h.D('language').onclick();
+  assert.equal(h.D('language').textContent, 'EN');
+  assert.equal(h.D('page-label').textContent, '全1ページ中 1ページ');
+  assert.equal(h.D('find-count').textContent, 'このページの一致行 1/1');
+  assert.match(h.D('status').textContent, /準備完了/);
+  assert.equal(h.ctx.csv(), csvBefore);
+  assert.equal(h.ctx.activeTab, activeBefore);
+  assert.equal(h.reads.length, readCount);
+  assert.match(h.D('data-head').innerHTML, /昇順|降順|並べ替えを解除/);
+  h.D('language').onclick();
+  assert.equal(h.D('language').textContent, 'JA');
+  assert.equal(h.D('page-label').textContent, 'Page 1 of 1');
+  assert.equal(h.D('find-count').textContent, '1 of 1 matching rows on this page');
+  assert.equal(h.ctx.csv(), csvBefore);
+  assert.equal(h.reads.length, readCount);
+});
+
+test('language toggle does not finish pending reads or enable stale CSV exports', async () => {
+  const h = setup(); h.seed('a', 'pending', 2);
+  const pending = h.ctx.activate('a');
+  assertExportsDisabled(h);
+  h.D('language').onclick();
+  assert.equal(h.D('language').textContent, 'EN');
+  assert.match(h.D('status').textContent, /読み込んでいます/);
+  assertExportsDisabled(h);
+  h.reads.at(-1).resolve([{ value: 'ready' }]);
+  await pending;
+  assert.equal(h.ctx.csv(), '"value"\r\n"ready"');
+  assert.match(h.D('status').textContent, /準備完了/);
+  h.D('language').onclick();
+  assert.equal(h.D('status').textContent, 'Ready — previewing 1 rows only.');
+  assert.equal(h.ctx.csv(), '"value"\r\n"ready"');
+});
+
+test('header-only PAR1 input reports a truncated file before calling the decoder', async () => {
+  const h = setup();
+  const short = new Blob(['PAR1']);
+  await h.ctx.openOne({ name: 'header-only.parquet', size: short.size, slice: (start, end) => short.slice(start, end) });
+  assert.equal(h.metadataReads.length, 0);
+  assert.equal(h.D('status').className, 'error');
+  assert.match(h.D('status').textContent, /truncated|footer/i);
+  assertExportsDisabled(h);
+  h.D('language').onclick();
+  assert.match(h.D('status').textContent, /ファイルが途中で切れている/);
+});
+
+test('schema type badges distinguish raw Parquet binary bytes from UTF-8 strings', () => {
+  const h = setup();
+  assert.equal(h.run('shortType("BYTE_ARRAY")'), 'binary');
+  assert.equal(h.run('shortType("FIXED_LEN_BYTE_ARRAY")'), 'binary');
+  assert.equal(h.run('shortType("UTF8")'), 'text');
+  assert.equal(h.run('shortType("STRING")'), 'text');
 });

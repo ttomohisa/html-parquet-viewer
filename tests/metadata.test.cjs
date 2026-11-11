@@ -10,7 +10,8 @@ test('app metadata describes the existing standalone output and network policy',
   const config = JSON.parse(read('app.config.json'));
   assert.equal(config.build?.output, 'parquet-viewer.html');
   assert.equal(config.build?.blockRuntimeNetwork, true);
-  assert.equal(config.versionPolicy, 'unversioned');
-  assert.equal(Object.hasOwn(config, 'version'), false);
+  assert.equal(config.versionPolicy, 'semver');
+  assert.equal(config.version, '1.0.0');
+  assert.match(config.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
   assert.match(read('parquet-viewer.html'), /connect-src 'none'/);
 });

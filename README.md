@@ -25,6 +25,7 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 
 ## Features
 
+- Switch between **Japanese and English** using the minimal JA / EN header button without closing a file or resetting the current page; the viewer starts in the saved language, or follows the browser language (Japanese browsers use Japanese, others use English)
 - Open one or many local Parquet files from the picker or with drag and drop
 - Work with several files at once in closable tabs
 - Read Parquet v1 and v2 files
@@ -45,7 +46,8 @@ Parquet files often need a quick inspection on locked-down workstations, air-gap
 
 1. Download [`parquet-viewer.html`](./parquet-viewer.html) from this repository.
 2. Open it in a current Chromium-based browser, Firefox, or Safari.
-3. Choose one or more `.parquet` files, or drag them into the drop area.
+3. Use the small **JA / EN** button in the header to switch between Japanese and English.
+4. Choose one or more `.parquet` files, or drag them into the drop area.
 
 There is no upload. Your selected files remain local to your browser session.
 
@@ -55,7 +57,7 @@ The viewer is intentionally a **preview and inspection** tool, not a full query 
 
 - Paging reads the current range of rows from the local file.
 - Sorting and finding are explicitly limited to the current preview page. Finding never filters rows or reads another page.
-- Find is case-insensitive and searches displayed cell text, including the `null` marker. Empty cells remain empty. Binary values are searched only through their displayed summary (the first 24 bytes), not their hidden bytes.
+- Find is case-insensitive and searches displayed cell text, including the `null` marker. Empty cells remain empty. Unannotated binary columns are preserved as bytes and shown as a byte-length/hex summary (up to the first 24 bytes); finding and CSV export use that summary, not the full hidden byte sequence.
 - Each tab keeps its find query in memory. Page and sort changes reset the current match; loading or failed reads clear old results.
 - Files whose metadata cannot be read retain their own error tab, which can be closed.
 - Each tab retains its own completed preview and sort order. Switching back does not re-read a completed page.
@@ -101,15 +103,25 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ### Catalog metadata
 
-`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The default UI is English. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
+`app.config.json` declares `versionPolicy: "semver"` and version `1.0.0` for the first tagged GitHub release. This is release metadata, not a new build step or an on-screen version badge. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI supports Japanese and English, choosing Japanese for Japanese-language browsers and English otherwise unless a language was previously selected. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
 
 ### State regression checks
 
-Run `node --test tests/*.test.cjs` with Node.js 22 or newer. No packages or build step are needed.
+Run `node --test tests/*.test.cjs` with Node.js 22 or newer for the dependency-free local regression suite (including decoding the checked-in real Snappy sample). No packages or build step are required to use the standalone HTML.
 
-The tests evaluate the application functions extracted from the shipped HTML, using a small DOM adapter, deferred parser-boundary doubles and fictitious row values. They cover tab/request ownership, metadata and page failures, page/CSV identity, retry, sorting, navigation, empty results and clipboard callbacks. Find checks cover literal/display-format matching, row navigation, tab/page ownership, and unchanged CSV/read behavior. BigInt checks cover signed INT64 extremes and adjacent values beyond Number precision. Keyboard-control checks cover native-button markup, sort state announcements, actual click handlers and focus continuity across tab/header replacement, including pending reads and newer focus. Contract checks preserve the embedded parser/codecs, CSP and notices, and syntax-check the complete inline script.
+The tests cover tab/request ownership, metadata and page failures, CSV identity, retry, sorting, navigation, empty results, clipboard callbacks, localized state, Unicode and BigInt values, and focus/keyboard behavior. They also pin the bundled third-party decoder and license notices, validate the offline CSP, and syntax-check the HTML script.
 
-These checks do not parse real Parquet, use a file picker or validate browser layout and native Tab / Enter / Space interaction. The manual file and browser checks above are still needed before release.
+The PR preview workflow runs additional integration tests using **test-only tooling**. It generates 123-row, eight-row-group Parquet fixtures with PyArrow for six codec configurations: uncompressed, Snappy, Gzip, Brotli, Zstandard and LZ4_RAW; it checks pages crossing row-group boundaries, raw binary fidelity, NULLs, Unicode, CSV-relevant values, both Parquet data-page versions and malformed inputs. A separate Playwright-driven test launches real Microsoft Edge on the Windows runner, opens the standalone HTML, loads local Parquet files, verifies language settings, sorting, page navigation, finding, CSV downloads, error recovery, mobile viewport geometry, blocked external requests and `file://` use. The synthetic fixtures and Playwright/PyArrow packages are CI-only and are not included in the app.
+
+To reproduce the deeper checks locally, install `playwright-core@1.56.1` and PyArrow `19.0.1` separately, run `python e2e/generate_fixtures.py`, then run `node --test e2e/codecs.cjs` and `node --test e2e/browser.cjs` with an available Edge, Chrome or Chromium executable. The browser checks use a local ephemeral HTTP server as well as a `file://` launch. Real devices, other browser engines, very large files and assistive-technology operation still require separate review.
+
+## Tagged releases
+
+The first formal GitHub Release is **v1.0.0**. Its proposed notes are in [releases/v1.0.0.md](releases/v1.0.0.md).
+
+The [release workflow](.github/workflows/release.yml) runs only on `main` after a relevant merged push (or by manual workflow dispatch on `main`). It checks `app.config.json`, release notes and the offline single-HTML artifact, runs the regression tests, then creates an annotated tag at the **merged `main` commit**, publishes a GitHub Release, and attaches `parquet-viewer.html` plus `SHA256SUMS.txt`. If the Release already exists, it does not publish it again; it refuses to move a conflicting tag.
+
+The PR branch does **not** create or publish tags or Releases. Merge and review remain manual. A successful workflow after merge is required before the Release exists. For future releases, increment the SemVer version and add matching `releases/vX.Y.Z.md` notes in the intended release PR.
 
 ## License and third-party notices
 
