@@ -103,7 +103,7 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ### Catalog metadata
 
-`app.config.json` declares `versionPolicy: "unversioned"` deliberately: the app has no semantic release version, version badge, or build step. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI supports Japanese and English, choosing Japanese for Japanese-language browsers and English otherwise unless a language was previously selected. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
+`app.config.json` declares `versionPolicy: "semver"` and version `1.0.0` for the first tagged GitHub release. This is release metadata, not a new build step or an on-screen version badge. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI supports Japanese and English, choosing Japanese for Japanese-language browsers and English otherwise unless a language was previously selected. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
 
 ### State regression checks
 
@@ -114,6 +114,14 @@ The tests cover tab/request ownership, metadata and page failures, CSV identity,
 The PR preview workflow runs additional integration tests using **test-only tooling**. It generates 123-row, eight-row-group Parquet fixtures with PyArrow for six codec configurations: uncompressed, Snappy, Gzip, Brotli, Zstandard and LZ4_RAW; it checks pages crossing row-group boundaries, raw binary fidelity, NULLs, Unicode, CSV-relevant values, both Parquet data-page versions and malformed inputs. A separate Playwright-driven test launches real Microsoft Edge on the Windows runner, opens the standalone HTML, loads local Parquet files, verifies language settings, sorting, page navigation, finding, CSV downloads, error recovery, mobile viewport geometry, blocked external requests and `file://` use. The synthetic fixtures and Playwright/PyArrow packages are CI-only and are not included in the app.
 
 To reproduce the deeper checks locally, install `playwright-core@1.56.1` and PyArrow `19.0.1` separately, run `python e2e/generate_fixtures.py`, then run `node --test e2e/codecs.cjs` and `node --test e2e/browser.cjs` with an available Edge, Chrome or Chromium executable. The browser checks use a local ephemeral HTTP server as well as a `file://` launch. Real devices, other browser engines, very large files and assistive-technology operation still require separate review.
+
+## Tagged releases
+
+The first formal GitHub Release is **v1.0.0**. Its proposed notes are in [releases/v1.0.0.md](releases/v1.0.0.md).
+
+The [release workflow](.github/workflows/release.yml) runs only on `main` after a relevant merged push (or by manual workflow dispatch on `main`). It checks `app.config.json`, release notes and the offline single-HTML artifact, runs the regression tests, then creates an annotated tag at the **merged `main` commit**, publishes a GitHub Release, and attaches `parquet-viewer.html` plus `SHA256SUMS.txt`. If the Release already exists, it does not publish it again; it refuses to move a conflicting tag.
+
+The PR branch does **not** create or publish tags or Releases. Merge and review remain manual. A successful workflow after merge is required before the Release exists. For future releases, increment the SemVer version and add matching `releases/vX.Y.Z.md` notes in the intended release PR.
 
 ## License and third-party notices
 
