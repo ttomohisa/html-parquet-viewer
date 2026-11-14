@@ -103,7 +103,7 @@ The distributable is deliberately a single generated HTML file. If you modify it
 
 ### Catalog metadata
 
-`app.config.json` declares `versionPolicy: "semver"` and version `1.0.0` for the first tagged GitHub release. This is release metadata, not a new build step or an on-screen version badge. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI supports Japanese and English, choosing Japanese for Japanese-language browsers and English otherwise unless a language was previously selected. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
+`app.config.json` declares version `1.0.0` for the first tagged GitHub release. It intentionally omits `versionPolicy`: the Browser Kitty Apps registry treats an omitted policy as a normally versioned app. This is release metadata, not a new build step or an on-screen version badge. The `build.output` field identifies the already-shipped `parquet-viewer.html`; it does not introduce a builder. `build.blockRuntimeNetwork: true` records the existing restrictive CSP. The UI supports Japanese and English, choosing Japanese for Japanese-language browsers and English otherwise unless a language was previously selected. The canonical catalog screenshots (`assets/screenshot.png` and `assets/screenshot-en.png`) reuse the genuine English demo capture in `assets/demo.png`, showing the bundled synthetic Parquet sample.
 
 ### State regression checks
 

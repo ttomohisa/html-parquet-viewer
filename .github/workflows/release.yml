@@ -41,8 +41,8 @@ jobs:
           node --input-type=commonjs <<'NODE'
           const fs = require('node:fs');
           const config = JSON.parse(fs.readFileSync('app.config.json', 'utf8'));
-          if (config.versionPolicy !== 'semver' || !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(config.version)) {
-            throw new Error('app.config.json must declare a valid stable Semantic Version');
+          if (Object.hasOwn(config, 'versionPolicy') || !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(config.version)) {
+            throw new Error('app.config.json must omit versionPolicy and declare a valid stable Semantic Version');
           }
           if (config.build?.output !== 'parquet-viewer.html' || config.build?.blockRuntimeNetwork !== true) {
             throw new Error('Unexpected release output or network policy');

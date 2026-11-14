@@ -1,7 +1,6 @@
 {
   "name": "HTML Parquet Viewer",
   "slug": "parquet-viewer",
-  "versionPolicy": "semver",
   "languages": [
     "ja",
     "en"

@@ -8,7 +8,7 @@ const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
 test('the proposed release is versioned, documented and bound to merged main', () => {
   const config = JSON.parse(read('app.config.json'));
-  assert.equal(config.versionPolicy, 'semver');
+  assert.equal(Object.hasOwn(config, 'versionPolicy'), false, 'versioned apps must omit versionPolicy for registry compatibility');
   assert.match(config.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
   const tag = 'v' + config.version;
   const notes = read('releases/' + tag + '.md');
